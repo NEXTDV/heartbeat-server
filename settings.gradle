@@ -1,0 +1,5 @@
+rootProject.name = 'heartbeat-server'
+
+include ':api'
+include ':domain'
+include ':infrastructure'
