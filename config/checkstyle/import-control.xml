@@ -7,6 +7,7 @@
   <!-- domain: api/infrastructure import 금지 -->
   <subpackage name="domain">
     <allow pkg="java"/>
+    <allow pkg="lombok"/>
     <allow pkg="org.springframework"/>
     <allow pkg="com.nextdv.domain"/>
     <disallow pkg="com.nextdv.api"/>
@@ -17,6 +18,7 @@
   <subpackage name="infrastructure">
     <allow pkg="java"/>
     <allow pkg="jakarta"/>
+    <allow pkg="lombok"/>
     <allow pkg="org.springframework"/>
     <allow pkg="com.nextdv.domain"/>
     <allow pkg="com.nextdv.infrastructure"/>
@@ -27,6 +29,7 @@
   <subpackage name="api">
     <allow pkg="java"/>
     <allow pkg="jakarta"/>
+    <allow pkg="lombok"/>
     <allow pkg="org.springframework"/>
     <allow pkg="com.nextdv.domain"/>
     <allow pkg="com.nextdv.api"/>
