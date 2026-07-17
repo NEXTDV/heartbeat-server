@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: heartbeat-server
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/nextdv}
+    username: ${DB_USERNAME:nextdv}
+    password: ${DB_PASSWORD:nextdv}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
