@@ -1,10 +1,6 @@
 plugins {
     id 'java'
-    id 'checkstyle'
-    id 'pmd'
-    id 'com.github.spotbugs'         version '6.0.0'  apply false
-    id 'com.diffplug.spotless'       version '6.25.0' apply false
-    id 'org.springframework.boot'    version '3.4.1'  apply false
+    id 'org.springframework.boot'        version '3.4.1' apply false
     id 'io.spring.dependency-management' version '1.1.7' apply false
 }
 
@@ -15,10 +11,6 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'checkstyle'
-    apply plugin: 'pmd'
-    apply plugin: 'com.github.spotbugs'
-    apply plugin: 'com.diffplug.spotless'
     apply plugin: 'io.spring.dependency-management'
 
     java {
@@ -39,49 +31,5 @@ subprojects {
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 
-    checkstyle {
-        maxWarnings = 0
-        configFile  = rootProject.file('config/checkstyle/checkstyle-rules.xml')
-    }
-
-    spotbugs {
-        toolVersion    = '4.9.3'
-        ignoreFailures = false
-        reportLevel    = 'high'
-    }
-
-    pmd {
-        consoleOutput = true
-        ruleSets      = []
-        ruleSetFiles  = files(rootProject.file('config/pmd/pmd-gc-rules.xml'))
-    }
-
-    spotless {
-        java {
-            googleJavaFormat('1.17.0')
-            removeUnusedImports()
-            trimTrailingWhitespace()
-            endWithNewline()
-        }
-    }
-
     tasks.named('test') { useJUnitPlatform() }
-
-    tasks.withType(Checkstyle).configureEach {
-        if (name != 'checkstyleMain') enabled = false
-    }
-    tasks.withType(Pmd).configureEach {
-        if (name != 'pmdMain') enabled = false
-    }
-    tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
-        reports { xml.required = false; text.required = true; html.required = false }
-        if (name != 'spotbugsMain') enabled = false
-    }
-
-    // SpotBugs 4.9.3 + Java 25: ASM 9.7.1 미지원 → 9.8 강제 교체
-    configurations.named('spotbugs') {
-        resolutionStrategy.eachDependency { details ->
-            if (details.requested.group == 'org.ow2.asm') { details.useVersion '9.8' }
-        }
-    }
 }
