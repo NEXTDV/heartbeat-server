@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class HeartbeatApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(HeartbeatApplication.class, args);
+    SpringApplication.run(
+        HeartbeatApplication.class,
+        args
+    );
   }
 }

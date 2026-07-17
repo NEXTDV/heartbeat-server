@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE import-control PUBLIC
+    "-//Checkstyle//DTD ImportControl Configuration 1.4//EN"
+    "https://checkstyle.org/dtds/import_control_1_4.dtd">
+<import-control pkg="com.nextdv">
+
+  <!-- domain: api/infrastructure import 금지 -->
+  <subpackage name="domain">
+    <allow pkg="java"/>
+    <allow pkg="org.springframework"/>
+    <allow pkg="com.nextdv.domain"/>
+    <disallow pkg="com.nextdv.api"/>
+    <disallow pkg="com.nextdv.infrastructure"/>
+  </subpackage>
+
+  <!-- infrastructure: domain import 허용, api import 금지 -->
+  <subpackage name="infrastructure">
+    <allow pkg="java"/>
+    <allow pkg="jakarta"/>
+    <allow pkg="org.springframework"/>
+    <allow pkg="com.nextdv.domain"/>
+    <allow pkg="com.nextdv.infrastructure"/>
+    <disallow pkg="com.nextdv.api"/>
+  </subpackage>
+
+  <!-- api: domain import 허용, infrastructure import 금지 -->
+  <subpackage name="api">
+    <allow pkg="java"/>
+    <allow pkg="jakarta"/>
+    <allow pkg="org.springframework"/>
+    <allow pkg="com.nextdv.domain"/>
+    <allow pkg="com.nextdv.api"/>
+    <disallow pkg="com.nextdv.infrastructure"/>
+  </subpackage>
+
+</import-control>
