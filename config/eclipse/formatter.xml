@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<profiles version="21">
+  <profile kind="CodeFormatterProfile" name="nextdv" version="21">
+
+    <!-- 기본 -->
+    <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="space"/>
+    <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="2"/>
+    <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="2"/>
+    <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="100"/>
+    <setting id="org.eclipse.jdt.core.formatter.join_wrapped_lines" value="false"/>
+
+    <!-- 메소드 체이닝/중첩: 줄 길이 무관하게 호출마다 줄바꿈 강제 -->
+    <setting id="org.eclipse.jdt.core.formatter.alignment_for_chained_method_invocations" value="49"/>
+    <setting id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_method_invocation" value="49"/>
+    <setting id="org.eclipse.jdt.core.formatter.wrap_before_method_invocation" value="true"/>
+
+    <!-- 중괄호 -->
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_type_declaration" value="end_of_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_method_declaration" value="end_of_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_block" value="end_of_line"/>
+    <setting id="org.eclipse.jdt.core.formatter.brace_position_for_switch" value="end_of_line"/>
+
+    <!-- 공백 -->
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_method_declaration" value="do not insert"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_method_invocation" value="do not insert"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_after_comma_in_method_invocation_arguments" value="insert"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_after_comma_in_method_declaration_parameters" value="insert"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_comma_in_method_invocation_arguments" value="do not insert"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_comma_in_method_declaration_parameters" value="do not insert"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_method_invocation" value="do not insert"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_method_invocation" value="do not insert"/>
+
+    <!-- 연산자 전후 공백 -->
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_binary_operator" value="insert"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_after_binary_operator" value="insert"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_before_assignment_operator" value="insert"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_space_after_assignment_operator" value="insert"/>
+
+    <!-- 빈줄 -->
+    <setting id="org.eclipse.jdt.core.formatter.blank_lines_before_first_class_body_declaration" value="0"/>
+    <setting id="org.eclipse.jdt.core.formatter.blank_lines_after_last_class_body_declaration" value="0"/>
+    <setting id="org.eclipse.jdt.core.formatter.number_of_blank_lines_at_beginning_of_method_body" value="0"/>
+    <setting id="org.eclipse.jdt.core.formatter.blank_lines_between_type_declarations" value="1"/>
+
+    <!-- 줄끝 -->
+    <setting id="org.eclipse.jdt.core.formatter.line_separator" value="\n"/>
+
+    <!-- 소괄호: 인수가 줄바꿈됐을 때 닫는 괄호 별도 줄 -->
+    <setting id="org.eclipse.jdt.core.formatter.parentheses_positions_in_method_invocation" value="separate_lines_if_wrapped"/>
+    <setting id="org.eclipse.jdt.core.formatter.parentheses_positions_in_method_declaration" value="separate_lines_if_wrapped"/>
+
+    <!-- 어노테이션 -->
+    <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_method" value="insert"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_type" value="insert"/>
+    <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_field" value="insert"/>
+
+    <!-- import 정렬 -->
+    <setting id="org.eclipse.jdt.core.formatter.number_of_empty_lines_to_preserve" value="1"/>
+
+    <!-- 후행 공백 제거 -->
+    <setting id="org.eclipse.jdt.core.formatter.remove_trailing_whitespaces" value="true"/>
+    <setting id="org.eclipse.jdt.core.formatter.remove_trailing_whitespaces_all" value="true"/>
+
+  </profile>
+</profiles>

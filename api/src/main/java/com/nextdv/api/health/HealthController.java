@@ -1,6 +1,7 @@
 package com.nextdv.api.health;
 
 import com.nextdv.api.common.ApiResponse;
+import com.nextdv.domain.health.HealthResult;
 import com.nextdv.domain.health.HealthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,13 @@ public class HealthController {
 
   @GetMapping
   public ResponseEntity<ApiResponse<HealthResponse>> health() {
-    return ResponseEntity.ok(ApiResponse.ok(HealthMapper.toResponse(healthService.check())));
+    HealthResult result = healthService.check();
+    return ResponseEntity.ok(
+        ApiResponse.ok(
+            HealthMapper.toResponse(
+                result
+            )
+        )
+    );
   }
 }
