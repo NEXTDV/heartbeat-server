@@ -6,7 +6,7 @@
     <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="space"/>
     <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="2"/>
     <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="2"/>
-    <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="100"/>
+    <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="80"/>
     <setting id="org.eclipse.jdt.core.formatter.join_wrapped_lines" value="false"/>
 
     <!-- 메소드 체이닝/중첩: 줄 길이 무관하게 호출마다 줄바꿈 강제 -->
