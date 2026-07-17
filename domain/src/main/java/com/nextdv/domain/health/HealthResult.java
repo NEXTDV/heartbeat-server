@@ -1,10 +1,10 @@
-package com.nextdv.api.health;
+package com.nextdv.domain.health;
 
-public class HealthResponse {
+public class HealthResult {
 
   private final String status;
 
-  public HealthResponse(String status) {
+  public HealthResult(String status) {
     this.status = status;
   }
 
