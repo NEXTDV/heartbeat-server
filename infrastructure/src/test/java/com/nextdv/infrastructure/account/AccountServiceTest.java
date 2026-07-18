@@ -25,7 +25,9 @@ class AccountServiceTest {
 
   @Container
   @ServiceConnection
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
+  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+      "postgres:16-alpine"
+  );
 
   @Autowired
   private AccountJpaRepository jpaRepository;
