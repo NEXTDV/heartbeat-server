@@ -20,6 +20,7 @@
     <allow pkg="jakarta"/>
     <allow pkg="lombok"/>
     <allow pkg="org.springframework"/>
+    <allow pkg="org.hibernate"/>
     <allow pkg="com.nextdv.domain"/>
     <allow pkg="com.nextdv.infrastructure"/>
     <disallow pkg="com.nextdv.api"/>
