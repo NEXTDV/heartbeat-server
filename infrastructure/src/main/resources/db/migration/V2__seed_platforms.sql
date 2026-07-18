@@ -1,0 +1,15 @@
+INSERT INTO platforms (id, name, category, health_check_url, timeout_ms, degraded_threshold_ms, icon_url, is_active) VALUES
+    (gen_random_uuid(), 'Claude', 'AI', 'https://status.anthropic.com/api/v2/summary.json', 5000, 2000, 'https://www.anthropic.com/favicon.ico', true),
+    (gen_random_uuid(), 'ChatGPT', 'AI', 'https://status.openai.com/api/v2/summary.json', 5000, 2000, 'https://openai.com/favicon.ico', true),
+    (gen_random_uuid(), 'Gemini', 'AI', 'https://status.cloud.google.com/incidents.json', 5000, 2000, 'https://www.gstatic.com/lamda/images/gemini_favicon_f069958c85030456e93de685481c559f160ea06.svg', true),
+    (gen_random_uuid(), 'GitHub', 'DEVTOOL', 'https://www.githubstatus.com/api/v2/summary.json', 5000, 2000, 'https://github.com/favicon.ico', true),
+    (gen_random_uuid(), 'AWS', 'CLOUD', 'https://health.aws.amazon.com/health/status', 5000, 2000, 'https://a0.awsstatic.com/libra-css/images/logos/aws_logo_smile_1200x630.png', true),
+    (gen_random_uuid(), 'Azure', 'CLOUD', 'https://azure.status.microsoft/api/v2/summary.json', 5000, 2000, 'https://azure.microsoft.com/favicon.ico', true),
+    (gen_random_uuid(), 'GCP', 'CLOUD', 'https://status.cloud.google.com/incidents.json', 5000, 2000, 'https://cloud.google.com/favicon.ico', true),
+    (gen_random_uuid(), 'Slack', 'COMMUNICATION', 'https://status.slack.com/api/v2.0.0/current', 5000, 2000, 'https://slack.com/favicon.ico', true),
+    (gen_random_uuid(), 'Discord', 'COMMUNICATION', 'https://discordstatus.com/api/v2/summary.json', 5000, 2000, 'https://discord.com/favicon.ico', true),
+    (gen_random_uuid(), 'Notion', 'DEVTOOL', 'https://www.notionstatuspage.com/api/v2/summary.json', 5000, 2000, 'https://www.notion.so/favicon.ico', true),
+    (gen_random_uuid(), 'Cloudflare', 'CLOUD', 'https://www.cloudflarestatus.com/api/v2/summary.json', 5000, 2000, 'https://www.cloudflare.com/favicon.ico', true),
+    (gen_random_uuid(), 'Vercel', 'CLOUD', 'https://www.vercel-status.com/api/v2/summary.json', 5000, 2000, 'https://vercel.com/favicon.ico', true),
+    (gen_random_uuid(), 'Datadog', 'DEVTOOL', 'https://status.datadoghq.com/api/v2/summary.json', 5000, 2000, 'https://www.datadoghq.com/favicon.ico', true),
+    (gen_random_uuid(), 'Jira', 'DEVTOOL', 'https://jira-software.status.atlassian.com/api/v2/summary.json', 5000, 2000, 'https://wac-cdn.atlassian.com/assets/img/favicons/atlassian/favicon.png', true);
