@@ -2,7 +2,9 @@ package com.nextdv.api.platform;
 
 import com.nextdv.domain.platform.ServiceCategory;
 import java.util.UUID;
+import lombok.Getter;
 
+@Getter
 public class PlatformResponse {
 
   private final UUID id;
@@ -31,37 +33,5 @@ public class PlatformResponse {
     this.degradedThresholdMs = degradedThresholdMs;
     this.iconUrl = iconUrl;
     this.active = active;
-  }
-
-  public UUID getId() {
-    return id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public ServiceCategory getCategory() {
-    return category;
-  }
-
-  public String getHealthCheckUrl() {
-    return healthCheckUrl;
-  }
-
-  public int getTimeoutMs() {
-    return timeoutMs;
-  }
-
-  public int getDegradedThresholdMs() {
-    return degradedThresholdMs;
-  }
-
-  public String getIconUrl() {
-    return iconUrl;
-  }
-
-  public boolean isActive() {
-    return active;
   }
 }
