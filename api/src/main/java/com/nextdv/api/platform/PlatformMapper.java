@@ -21,8 +21,9 @@ public class PlatformMapper {
     );
   }
 
-  public static List<PlatformResponse> toResponseList(
-      List<Platform> platforms) {
-    return platforms.stream().map(PlatformMapper::toResponse).toList();
+  public static List<PlatformResponse> toResponseList(List<Platform> platforms) {
+    return platforms.stream()
+        .map(PlatformMapper::toResponse)
+        .toList();
   }
 }
