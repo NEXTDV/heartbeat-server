@@ -26,10 +26,10 @@ public class HealthCheckLogEntity {
   @Column(nullable = false, columnDefinition = "service_status")
   private ServiceStatus status;
 
-  @Column(name = "response_time_ms", nullable = false)
+  @Column(name = "response_ms", nullable = false)
   private long responseTimeMs;
 
-  @Column(name = "checked_at", nullable = false)
+  @Column(name = "created_at", nullable = false)
   private Instant checkedAt;
 
   protected HealthCheckLogEntity() {
