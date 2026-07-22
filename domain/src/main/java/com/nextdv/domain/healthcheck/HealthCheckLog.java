@@ -2,9 +2,11 @@ package com.nextdv.domain.healthcheck;
 
 import java.time.Instant;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class HealthCheckLog {
 
   private final UUID id;
@@ -12,13 +14,4 @@ public class HealthCheckLog {
   private final ServiceStatus status;
   private final long responseTimeMs;
   private final Instant checkedAt;
-
-  public HealthCheckLog(
-      UUID id, UUID platformId, ServiceStatus status, long responseTimeMs, Instant checkedAt) {
-    this.id = id;
-    this.platformId = platformId;
-    this.status = status;
-    this.responseTimeMs = responseTimeMs;
-    this.checkedAt = checkedAt;
-  }
 }
