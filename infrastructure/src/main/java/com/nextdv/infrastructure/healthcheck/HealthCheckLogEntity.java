@@ -1,6 +1,5 @@
 package com.nextdv.infrastructure.healthcheck;
 
-import com.nextdv.domain.healthcheck.ServiceStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -24,7 +23,7 @@ public class HealthCheckLogEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, columnDefinition = "service_status")
-  private ServiceStatus status;
+  private ServiceStatusEntity status;
 
   @Column(name = "response_ms", nullable = false)
   private long responseTimeMs;
@@ -36,7 +35,8 @@ public class HealthCheckLogEntity {
   }
 
   public HealthCheckLogEntity(
-      UUID id, UUID platformId, ServiceStatus status, long responseTimeMs, Instant checkedAt) {
+      UUID id, UUID platformId, ServiceStatusEntity status, long responseTimeMs,
+      Instant checkedAt) {
     this.id = id;
     this.platformId = platformId;
     this.status = status;

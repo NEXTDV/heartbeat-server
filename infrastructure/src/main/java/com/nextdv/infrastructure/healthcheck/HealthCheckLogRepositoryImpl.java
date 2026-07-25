@@ -2,6 +2,7 @@ package com.nextdv.infrastructure.healthcheck;
 
 import com.nextdv.domain.healthcheck.HealthCheckLog;
 import com.nextdv.domain.healthcheck.HealthCheckLogRepository;
+import com.nextdv.domain.healthcheck.ServiceStatus;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,8 +18,11 @@ public class HealthCheckLogRepositoryImpl implements HealthCheckLogRepository {
   @Override
   public HealthCheckLog save(HealthCheckLog log) {
     HealthCheckLogEntity entity = new HealthCheckLogEntity(
-        log.getId(), log.getPlatformId(), log.getStatus(),
-        log.getResponseTimeMs(), log.getCheckedAt()
+        log.getId(),
+        log.getPlatformId(),
+        ServiceStatusEntity.valueOf(log.getStatus().name()),
+        log.getResponseTimeMs(),
+        log.getCheckedAt()
     );
     return toDomain(jpaRepository.save(entity));
   }
@@ -37,7 +41,7 @@ public class HealthCheckLogRepositoryImpl implements HealthCheckLogRepository {
     return new HealthCheckLog(
         entity.getId(),
         entity.getPlatformId(),
-        entity.getStatus(),
+        ServiceStatus.valueOf(entity.getStatus().name()),
         entity.getResponseTimeMs(),
         entity.getCheckedAt()
     );
