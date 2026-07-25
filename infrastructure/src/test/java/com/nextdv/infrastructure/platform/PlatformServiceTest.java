@@ -6,6 +6,7 @@ import com.nextdv.domain.platform.Platform;
 import com.nextdv.domain.platform.PlatformService;
 import com.nextdv.domain.platform.ServiceCategory;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,5 +67,29 @@ class PlatformServiceTest {
             "GitHub",
             "AWS"
         );
+  }
+
+  @Test
+  void ID로_플랫폼을_단건_조회한다() {
+    UUID id = UUID.randomUUID();
+    jpaRepository.save(
+        new PlatformEntity(
+            id, "GitHub", ServiceCategory.DEVTOOL,
+            "https://api.github.com", 3000, 1000, null, true
+        )
+    );
+
+    Optional<Platform> result = platformService.findById(id);
+
+    assertThat(result).isPresent();
+    assertThat(result.get().getId()).isEqualTo(id);
+    assertThat(result.get().getName()).isEqualTo("GitHub");
+  }
+
+  @Test
+  void 존재하지_않는_ID로_조회하면_빈_Optional을_반환한다() {
+    Optional<Platform> result = platformService.findById(UUID.randomUUID());
+
+    assertThat(result).isEmpty();
   }
 }
