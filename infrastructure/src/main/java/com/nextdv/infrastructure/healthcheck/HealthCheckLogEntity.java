@@ -9,8 +9,10 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Entity
 @Table(name = "health_check_logs")
 public class HealthCheckLogEntity {
@@ -30,9 +32,6 @@ public class HealthCheckLogEntity {
 
   @Column(name = "created_at", nullable = false)
   private Instant checkedAt;
-
-  protected HealthCheckLogEntity() {
-  }
 
   public HealthCheckLogEntity(
       UUID id, UUID platformId, ServiceStatusEntity status, long responseTimeMs,
