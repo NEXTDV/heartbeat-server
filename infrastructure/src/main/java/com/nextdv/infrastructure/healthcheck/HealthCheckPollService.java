@@ -59,7 +59,7 @@ public class HealthCheckPollService {
     );
   }
 
-  private ServiceStatus determineStatus(int httpStatus, long responseMs, int degradedThresholdMs) {
+  ServiceStatus determineStatus(int httpStatus, long responseMs, int degradedThresholdMs) {
     if (httpStatus >= 500)
       return ServiceStatus.MAJOR_OUTAGE;
     if (httpStatus >= 400)
