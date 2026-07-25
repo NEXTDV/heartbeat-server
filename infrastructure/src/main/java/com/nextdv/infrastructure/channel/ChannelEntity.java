@@ -1,6 +1,5 @@
 package com.nextdv.infrastructure.channel;
 
-import com.nextdv.domain.channel.ChannelType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -31,7 +30,7 @@ public class ChannelEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(columnDefinition = "channel_type", nullable = false)
-  private ChannelType type;
+  private ChannelTypeEntity type;
 
   @Column(nullable = false, length = 100)
   private String name;

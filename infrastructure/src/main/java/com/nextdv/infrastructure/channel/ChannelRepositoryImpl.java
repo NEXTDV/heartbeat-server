@@ -2,6 +2,7 @@ package com.nextdv.infrastructure.channel;
 
 import com.nextdv.domain.channel.Channel;
 import com.nextdv.domain.channel.ChannelRepository;
+import com.nextdv.domain.channel.ChannelType;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,7 +37,7 @@ public class ChannelRepositoryImpl implements ChannelRepository {
     return new ChannelEntity(
         channel.getId(),
         channel.getUserId(),
-        channel.getType(),
+        ChannelTypeEntity.valueOf(channel.getType().name()),
         channel.getName(),
         channel.getConfig(),
         channel.getCreatedAt(),
@@ -49,7 +50,7 @@ public class ChannelRepositoryImpl implements ChannelRepository {
     return new Channel(
         entity.getId(),
         entity.getUserId(),
-        entity.getType(),
+        ChannelType.valueOf(entity.getType().name()),
         entity.getName(),
         entity.getConfig(),
         entity.getCreatedAt(),
