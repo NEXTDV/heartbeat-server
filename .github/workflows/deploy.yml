@@ -31,12 +31,24 @@ jobs:
     needs: build-push
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to k3s
+      - uses: actions/checkout@v4
+
+      - name: k8s 매니페스트 서버 업로드
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.LIGHTSAIL_HOST }}
+          username: ${{ secrets.LIGHTSAIL_USER }}
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          source: "k8s/deployment.yaml,k8s/service.yaml,k8s/ingress.yaml"
+          target: "/home/ubuntu"
+
+      - name: k3s 배포
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.LIGHTSAIL_HOST }}
           username: ${{ secrets.LIGHTSAIL_USER }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           script: |
-            kubectl rollout restart deployment/heartbeat -n heartbeat
-            kubectl rollout status deployment/heartbeat -n heartbeat --timeout=120s
+            sudo kubectl apply -f /home/ubuntu/k8s/
+            sudo kubectl rollout restart deployment/heartbeat -n heartbeat
+            sudo kubectl rollout status deployment/heartbeat -n heartbeat --timeout=120s
