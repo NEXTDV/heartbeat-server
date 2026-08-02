@@ -1,6 +1,8 @@
 package com.nextdv.domain.platform;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,5 +14,9 @@ public class PlatformService {
 
   public List<Platform> findAll() {
     return platformRepository.findAll(true);
+  }
+
+  public Optional<Platform> findById(UUID id) {
+    return platformRepository.findById(id);
   }
 }

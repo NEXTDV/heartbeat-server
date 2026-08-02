@@ -3,6 +3,8 @@ package com.nextdv.infrastructure.platform;
 import com.nextdv.domain.platform.Platform;
 import com.nextdv.domain.platform.PlatformRepository;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +20,11 @@ public class PlatformRepositoryImpl implements PlatformRepository {
         .filter(entity -> !activeOnly || entity.isActive())
         .map(this::toDomain)
         .toList();
+  }
+
+  @Override
+  public Optional<Platform> findById(UUID id) {
+    return platformJpaRepository.findById(id).map(this::toDomain);
   }
 
   private Platform toDomain(PlatformEntity entity) {
