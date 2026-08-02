@@ -29,7 +29,7 @@ public class ChannelEntity {
   private UUID userId;
 
   @Enumerated(EnumType.STRING)
-  @Column(columnDefinition = "channel_type", nullable = false)
+  @Column(nullable = false)
   private ChannelTypeEntity type;
 
   @Column(nullable = false, length = 100)
