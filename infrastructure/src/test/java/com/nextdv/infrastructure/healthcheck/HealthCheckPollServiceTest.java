@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 class HealthCheckPollServiceTest {
 
-  private final HealthCheckPollService service = new HealthCheckPollService(null, null, null);
+  private final HealthCheckPollService service = new HealthCheckPollService(null, null, null, null);
 
   @Test
   void 응답이_2xx이고_임계값_미만이면_OPERATIONAL() {

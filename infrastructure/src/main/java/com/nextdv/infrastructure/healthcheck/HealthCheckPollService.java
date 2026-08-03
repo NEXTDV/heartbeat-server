@@ -1,8 +1,12 @@
 package com.nextdv.infrastructure.healthcheck;
 
+import com.nextdv.domain.common.UuidV7;
 import com.nextdv.domain.healthcheck.HealthCheckLog;
 import com.nextdv.domain.healthcheck.HealthCheckLogRepository;
 import com.nextdv.domain.healthcheck.ServiceStatus;
+import com.nextdv.domain.incident.Incident;
+import com.nextdv.domain.incident.IncidentRepository;
+import com.nextdv.domain.incident.IncidentStatus;
 import com.nextdv.domain.platform.Platform;
 import com.nextdv.domain.platform.PlatformService;
 import java.time.Instant;
@@ -21,6 +25,7 @@ public class HealthCheckPollService {
   private final PlatformService platformService;
   private final HealthCheckLogRepository healthCheckLogRepository;
   private final RestClient healthCheckRestClient;
+  private final IncidentRepository incidentRepository;
 
   public void pollAll() {
     platformService.findAll().forEach(this::poll);
@@ -57,6 +62,35 @@ public class HealthCheckPollService {
             UUID.randomUUID(), platform.getId(), status, responseMs, Instant.now()
         )
     );
+
+    handleIncident(
+        platform.getId(),
+        status
+    );
+  }
+
+  private void handleIncident(UUID platformId, ServiceStatus status) {
+    if (status == ServiceStatus.PARTIAL_OUTAGE || status == ServiceStatus.MAJOR_OUTAGE) {
+      incidentRepository.findOpenByPlatformId(platformId).ifPresentOrElse(
+          existing -> {
+          },
+          () -> incidentRepository.save(
+              new Incident(
+                  UuidV7.generate(), platformId, status, IncidentStatus.OPEN,
+                  Instant.now(), null
+              )
+          )
+      );
+    } else {
+      incidentRepository.findOpenByPlatformId(platformId).ifPresent(
+          open -> incidentRepository.save(
+              new Incident(
+                  open.getId(), open.getPlatformId(), open.getImpact(),
+                  IncidentStatus.RESOLVED, open.getStartedAt(), Instant.now()
+              )
+          )
+      );
+    }
   }
 
   ServiceStatus determineStatus(int httpStatus, long responseMs, int degradedThresholdMs) {
