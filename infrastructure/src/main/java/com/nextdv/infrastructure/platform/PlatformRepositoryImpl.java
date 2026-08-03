@@ -36,7 +36,8 @@ public class PlatformRepositoryImpl implements PlatformRepository {
         entity.getTimeoutMs(),
         entity.getDegradedThresholdMs(),
         entity.getIconUrl(),
-        entity.isActive()
+        entity.isActive(),
+        entity.getExpectedStatusCode()
     );
   }
 

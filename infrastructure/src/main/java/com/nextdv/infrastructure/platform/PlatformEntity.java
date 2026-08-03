@@ -40,6 +40,9 @@ public class PlatformEntity {
   @Column(name = "is_active", nullable = false)
   private boolean isActive;
 
+  @Column(name = "expected_status_code", nullable = false)
+  private int expectedStatusCode;
+
   protected PlatformEntity() {
   }
 
@@ -51,7 +54,8 @@ public class PlatformEntity {
       int timeoutMs,
       int degradedThresholdMs,
       String iconUrl,
-      boolean isActive) {
+      boolean isActive,
+      int expectedStatusCode) {
     this.id = id;
     this.name = name;
     this.category = category;
@@ -60,6 +64,7 @@ public class PlatformEntity {
     this.degradedThresholdMs = degradedThresholdMs;
     this.iconUrl = iconUrl;
     this.isActive = isActive;
+    this.expectedStatusCode = expectedStatusCode;
   }
 
 }

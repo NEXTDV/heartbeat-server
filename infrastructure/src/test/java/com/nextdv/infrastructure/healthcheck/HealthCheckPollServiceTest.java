@@ -14,7 +14,8 @@ class HealthCheckPollServiceTest {
     ServiceStatus status = service.determineStatus(
         200,
         500,
-        1000
+        1000,
+        200
     );
     assertThat(status).isEqualTo(ServiceStatus.OPERATIONAL);
   }
@@ -24,7 +25,8 @@ class HealthCheckPollServiceTest {
     ServiceStatus status = service.determineStatus(
         200,
         1000,
-        1000
+        1000,
+        200
     );
     assertThat(status).isEqualTo(ServiceStatus.DEGRADED);
   }
@@ -34,7 +36,8 @@ class HealthCheckPollServiceTest {
     ServiceStatus status = service.determineStatus(
         404,
         100,
-        1000
+        1000,
+        200
     );
     assertThat(status).isEqualTo(ServiceStatus.PARTIAL_OUTAGE);
   }
@@ -44,7 +47,41 @@ class HealthCheckPollServiceTest {
     ServiceStatus status = service.determineStatus(
         500,
         100,
-        1000
+        1000,
+        200
+    );
+    assertThat(status).isEqualTo(ServiceStatus.MAJOR_OUTAGE);
+  }
+
+  @Test
+  void 기대코드가_401이고_실제도_401이면_OPERATIONAL() {
+    ServiceStatus status = service.determineStatus(
+        401,
+        500,
+        1000,
+        401
+    );
+    assertThat(status).isEqualTo(ServiceStatus.OPERATIONAL);
+  }
+
+  @Test
+  void 기대코드가_401인데_실제가_200이면_PARTIAL_OUTAGE() {
+    ServiceStatus status = service.determineStatus(
+        200,
+        500,
+        1000,
+        401
+    );
+    assertThat(status).isEqualTo(ServiceStatus.PARTIAL_OUTAGE);
+  }
+
+  @Test
+  void 기대코드가_401인데_실제가_500이면_MAJOR_OUTAGE() {
+    ServiceStatus status = service.determineStatus(
+        500,
+        500,
+        1000,
+        401
     );
     assertThat(status).isEqualTo(ServiceStatus.MAJOR_OUTAGE);
   }

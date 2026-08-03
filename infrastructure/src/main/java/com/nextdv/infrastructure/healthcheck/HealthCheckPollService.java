@@ -45,7 +45,8 @@ public class HealthCheckPollService {
       status = determineStatus(
           response.getStatusCode().value(),
           responseMs,
-          platform.getDegradedThresholdMs()
+          platform.getDegradedThresholdMs(),
+          platform.getExpectedStatusCode()
       );
     } catch (ResourceAccessException e) {
       responseMs = System.currentTimeMillis() - startMs;
@@ -59,13 +60,17 @@ public class HealthCheckPollService {
     );
   }
 
-  ServiceStatus determineStatus(int httpStatus, long responseMs, int degradedThresholdMs) {
-    if (httpStatus >= 500)
-      return ServiceStatus.MAJOR_OUTAGE;
-    if (httpStatus >= 400)
+  ServiceStatus determineStatus(
+      int httpStatus, long responseMs, int degradedThresholdMs, int expectedStatusCode) {
+    if (httpStatus != expectedStatusCode) {
+      if (httpStatus >= 500) {
+        return ServiceStatus.MAJOR_OUTAGE;
+      }
       return ServiceStatus.PARTIAL_OUTAGE;
-    if (responseMs >= degradedThresholdMs)
+    }
+    if (responseMs >= degradedThresholdMs) {
       return ServiceStatus.DEGRADED;
+    }
     return ServiceStatus.OPERATIONAL;
   }
 }

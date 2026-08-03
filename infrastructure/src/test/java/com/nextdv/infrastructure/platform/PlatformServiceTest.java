@@ -49,13 +49,13 @@ class PlatformServiceTest {
     jpaRepository.save(
         new PlatformEntity(
             UUID.randomUUID(), "GitHub", ServiceCategory.DEVTOOL,
-            "https://api.github.com", 3000, 1000, null, true
+            "https://api.github.com", 3000, 1000, null, true, 200
         )
     );
     jpaRepository.save(
         new PlatformEntity(
             UUID.randomUUID(), "AWS", ServiceCategory.CLOUD,
-            "https://health.aws.amazon.com", 3000, 1000, null, true
+            "https://health.aws.amazon.com", 3000, 1000, null, true, 200
         )
     );
 

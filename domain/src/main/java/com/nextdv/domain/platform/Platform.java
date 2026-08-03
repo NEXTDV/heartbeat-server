@@ -14,6 +14,7 @@ public class Platform {
   private final int degradedThresholdMs;
   private final String iconUrl;
   private final boolean active;
+  private final int expectedStatusCode;
 
   public Platform(
       UUID id,
@@ -23,7 +24,8 @@ public class Platform {
       int timeoutMs,
       int degradedThresholdMs,
       String iconUrl,
-      boolean active) {
+      boolean active,
+      int expectedStatusCode) {
     this.id = id;
     this.name = name;
     this.category = category;
@@ -32,6 +34,7 @@ public class Platform {
     this.degradedThresholdMs = degradedThresholdMs;
     this.iconUrl = iconUrl;
     this.active = active;
+    this.expectedStatusCode = expectedStatusCode;
   }
 
 }
