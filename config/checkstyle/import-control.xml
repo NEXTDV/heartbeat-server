@@ -9,6 +9,7 @@
     <allow pkg="java"/>
     <allow pkg="lombok"/>
     <allow pkg="org.springframework"/>
+    <allow pkg="com.fasterxml.uuid"/>
     <allow pkg="com.nextdv.domain"/>
     <disallow pkg="com.nextdv.api"/>
     <disallow pkg="com.nextdv.infrastructure"/>
@@ -21,7 +22,6 @@
     <allow pkg="lombok"/>
     <allow pkg="org.springframework"/>
     <allow pkg="org.hibernate"/>
-    <allow pkg="com.fasterxml.uuid"/>
     <allow pkg="com.nextdv.domain"/>
     <allow pkg="com.nextdv.infrastructure"/>
     <disallow pkg="com.nextdv.api"/>
