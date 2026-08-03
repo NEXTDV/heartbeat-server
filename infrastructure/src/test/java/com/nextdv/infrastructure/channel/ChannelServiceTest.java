@@ -97,6 +97,29 @@ class ChannelServiceTest {
   }
 
   @Test
+  void 삭제된_채널은_목록_조회에서_제외된다() {
+    UUID userId = UUID.randomUUID();
+    Channel active = channelService.create(
+        userId,
+        ChannelType.SLACK,
+        "활성 채널",
+        Map.of()
+    );
+    Channel deleted = channelService.create(
+        userId,
+        ChannelType.DISCORD,
+        "삭제된 채널",
+        Map.of()
+    );
+    channelService.delete(deleted.getId());
+
+    List<Channel> result = channelService.findAllByUserId(userId);
+
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getId()).isEqualTo(active.getId());
+  }
+
+  @Test
   void 존재하지_않는_채널을_삭제하면_예외가_발생한다() {
     UUID channelId = UUID.randomUUID();
 
