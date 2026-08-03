@@ -12,7 +12,8 @@ spec:
     metadata:
       labels:
         app: heartbeat
-    spec:
+      imagePullSecrets:
+        - name: ghcr-pull-secret
       containers:
         - name: heartbeat
           image: ghcr.io/nextdv/heartbeat-server:latest
