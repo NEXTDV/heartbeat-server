@@ -31,6 +31,17 @@ jobs:
     needs: build-push
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy k3s manifests to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.LIGHTSAIL_HOST }}
+          username: ${{ secrets.LIGHTSAIL_USER }}
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          source: "k3s/"
+          target: "~/heartbeat-k3s"
+
       - name: Deploy to k3s
         uses: appleboy/ssh-action@v1
         with:
@@ -38,5 +49,9 @@ jobs:
           username: ${{ secrets.LIGHTSAIL_USER }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           script: |
-            kubectl rollout restart deployment/heartbeat -n heartbeat
-            kubectl rollout status deployment/heartbeat -n heartbeat --timeout=120s
+            sudo kubectl apply -f ~/heartbeat-k3s/k3s/namespace.yaml
+            sudo kubectl apply -f ~/heartbeat-k3s/k3s/service.yaml
+            sudo kubectl apply -f ~/heartbeat-k3s/k3s/deployment.yaml
+            sudo kubectl apply -f ~/heartbeat-k3s/k3s/ingress.yaml
+            sudo kubectl rollout restart deployment/heartbeat -n heartbeat
+            sudo kubectl rollout status deployment/heartbeat -n heartbeat --timeout=120s
