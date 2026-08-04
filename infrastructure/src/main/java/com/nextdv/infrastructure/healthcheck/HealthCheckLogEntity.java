@@ -24,7 +24,7 @@ public class HealthCheckLogEntity {
   private UUID platformId;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false, columnDefinition = "service_status")
+  @Column(nullable = false)
   private ServiceStatusEntity status;
 
   @Column(name = "response_ms", nullable = false)
