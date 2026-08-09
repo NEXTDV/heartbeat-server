@@ -30,13 +30,13 @@ class HealthCheckPollServiceTest {
   }
 
   @Test
-  void 응답이_4xx이면_PARTIAL_OUTAGE() {
+  void 응답이_4xx이면_OPERATIONAL() {
     ServiceStatus status = service.determineStatus(
         404,
         100,
         1000
     );
-    assertThat(status).isEqualTo(ServiceStatus.PARTIAL_OUTAGE);
+    assertThat(status).isEqualTo(ServiceStatus.OPERATIONAL);
   }
 
   @Test
