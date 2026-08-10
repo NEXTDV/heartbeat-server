@@ -62,8 +62,6 @@ public class HealthCheckPollService {
   ServiceStatus determineStatus(int httpStatus, long responseMs, int degradedThresholdMs) {
     if (httpStatus >= 500)
       return ServiceStatus.MAJOR_OUTAGE;
-    if (httpStatus >= 400)
-      return ServiceStatus.PARTIAL_OUTAGE;
     if (responseMs >= degradedThresholdMs)
       return ServiceStatus.DEGRADED;
     return ServiceStatus.OPERATIONAL;
