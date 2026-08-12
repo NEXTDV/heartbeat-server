@@ -33,6 +33,18 @@ public class ChannelRepositoryImpl implements ChannelRepository {
     return channelJpaRepository.findById(id).map(this::toDomain);
   }
 
+  @Override
+  public List<Channel> findEmailChannelsByPlatformId(UUID platformId) {
+    return channelJpaRepository
+        .findEmailChannelsByPlatformId(
+            platformId,
+            ChannelTypeEntity.EMAIL
+        )
+        .stream()
+        .map(this::toDomain)
+        .toList();
+  }
+
   private ChannelEntity toEntity(Channel channel) {
     return new ChannelEntity(
         channel.getId(),
