@@ -63,35 +63,60 @@ class HealthCheckPollNotificationTest {
     Instant now = Instant.now();
 
     channelJpaRepository.save(
-        new ChannelEntity(channelId, UUID.randomUUID(), ChannelTypeEntity.EMAIL,
-            "이메일", Map.of("address", "user@example.com"), now, now, null));
+        new ChannelEntity(
+            channelId, UUID.randomUUID(), ChannelTypeEntity.EMAIL,
+            "이메일", Map.of(
+                "address",
+                "user@example.com"
+            ), now, now, null
+        )
+    );
     channelPlatformJpaRepository.save(
-        new ChannelPlatformEntity(UUID.randomUUID(), channelId, platformId, now));
+        new ChannelPlatformEntity(UUID.randomUUID(), channelId, platformId, now)
+    );
 
-    Platform platform = new Platform(platformId, "GitHub", ServiceCategory.DEVTOOL,
-        "https://github.com", 5000, 2000, null, true);
+    Platform platform = new Platform(
+        platformId, "GitHub", ServiceCategory.DEVTOOL,
+        "https://github.com", 5000, 2000, null, true
+    );
 
-    service.notifyStatusChange(platform, ServiceStatus.OPERATIONAL, ServiceStatus.MAJOR_OUTAGE);
+    service.notifyStatusChange(
+        platform,
+        ServiceStatus.OPERATIONAL,
+        ServiceStatus.MAJOR_OUTAGE
+    );
 
     assertThat(fakeEmailSender.getSentAddresses()).containsExactly("user@example.com");
   }
 
   @Test
   void 상태가_같으면_알림이_발송되지_않는다() {
-    Platform platform = new Platform(UUID.randomUUID(), "GitHub", ServiceCategory.DEVTOOL,
-        "https://github.com", 5000, 2000, null, true);
+    Platform platform = new Platform(
+        UUID.randomUUID(), "GitHub", ServiceCategory.DEVTOOL,
+        "https://github.com", 5000, 2000, null, true
+    );
 
-    service.notifyStatusChange(platform, ServiceStatus.OPERATIONAL, ServiceStatus.OPERATIONAL);
+    service.notifyStatusChange(
+        platform,
+        ServiceStatus.OPERATIONAL,
+        ServiceStatus.OPERATIONAL
+    );
 
     assertThat(fakeEmailSender.getSentAddresses()).isEmpty();
   }
 
   @Test
   void 이전_상태가_없으면_알림이_발송되지_않는다() {
-    Platform platform = new Platform(UUID.randomUUID(), "GitHub", ServiceCategory.DEVTOOL,
-        "https://github.com", 5000, 2000, null, true);
+    Platform platform = new Platform(
+        UUID.randomUUID(), "GitHub", ServiceCategory.DEVTOOL,
+        "https://github.com", 5000, 2000, null, true
+    );
 
-    service.notifyStatusChange(platform, null, ServiceStatus.MAJOR_OUTAGE);
+    service.notifyStatusChange(
+        platform,
+        null,
+        ServiceStatus.MAJOR_OUTAGE
+    );
 
     assertThat(fakeEmailSender.getSentAddresses()).isEmpty();
   }
@@ -103,15 +128,28 @@ class HealthCheckPollNotificationTest {
     Instant now = Instant.now();
 
     channelJpaRepository.save(
-        new ChannelEntity(channelId, UUID.randomUUID(), ChannelTypeEntity.EMAIL,
-            "이메일", Map.of("address", "user@example.com"), now, now, null));
+        new ChannelEntity(
+            channelId, UUID.randomUUID(), ChannelTypeEntity.EMAIL,
+            "이메일", Map.of(
+                "address",
+                "user@example.com"
+            ), now, now, null
+        )
+    );
     channelPlatformJpaRepository.save(
-        new ChannelPlatformEntity(UUID.randomUUID(), channelId, platformId, now, now));
+        new ChannelPlatformEntity(UUID.randomUUID(), channelId, platformId, now, now)
+    );
 
-    Platform platform = new Platform(platformId, "GitHub", ServiceCategory.DEVTOOL,
-        "https://github.com", 5000, 2000, null, true);
+    Platform platform = new Platform(
+        platformId, "GitHub", ServiceCategory.DEVTOOL,
+        "https://github.com", 5000, 2000, null, true
+    );
 
-    service.notifyStatusChange(platform, ServiceStatus.OPERATIONAL, ServiceStatus.MAJOR_OUTAGE);
+    service.notifyStatusChange(
+        platform,
+        ServiceStatus.OPERATIONAL,
+        ServiceStatus.MAJOR_OUTAGE
+    );
 
     assertThat(fakeEmailSender.getSentAddresses()).isEmpty();
   }

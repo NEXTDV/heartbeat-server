@@ -1,0 +1,27 @@
+package com.nextdv.infrastructure.channel;
+
+import com.nextdv.domain.channel.ChannelPlatform;
+import com.nextdv.domain.channel.ChannelPlatformRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+@Repository
+@RequiredArgsConstructor
+public class ChannelPlatformRepositoryImpl implements ChannelPlatformRepository {
+
+  private final ChannelPlatformJpaRepository jpaRepository;
+
+  @Override
+  public ChannelPlatform save(ChannelPlatform channelPlatform) {
+    ChannelPlatformEntity entity = new ChannelPlatformEntity(
+        channelPlatform.getId(),
+        channelPlatform.getChannelId(),
+        channelPlatform.getPlatformId(),
+        channelPlatform.getCreatedAt()
+    );
+    ChannelPlatformEntity saved = jpaRepository.save(entity);
+    return new ChannelPlatform(
+        saved.getId(), saved.getChannelId(), saved.getPlatformId(), saved.getCreatedAt()
+    );
+  }
+}

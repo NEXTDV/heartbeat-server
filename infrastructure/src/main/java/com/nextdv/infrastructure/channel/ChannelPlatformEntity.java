@@ -28,7 +28,8 @@ public class ChannelPlatformEntity {
   @Column(name = "deleted_at")
   private Instant deletedAt;
 
-  protected ChannelPlatformEntity() {}
+  protected ChannelPlatformEntity() {
+  }
 
   public ChannelPlatformEntity(UUID id, UUID channelId, UUID platformId, Instant createdAt) {
     this(id, channelId, platformId, createdAt, null);
