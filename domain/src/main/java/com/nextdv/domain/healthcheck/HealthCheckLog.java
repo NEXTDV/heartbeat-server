@@ -12,6 +12,7 @@ public class HealthCheckLog {
   private final UUID id;
   private final UUID platformId;
   private final ServiceStatus status;
-  private final long responseTimeMs;
+  private final Integer httpStatusCode;
+  private final Integer responseTimeMs;
   private final Instant checkedAt;
 }
