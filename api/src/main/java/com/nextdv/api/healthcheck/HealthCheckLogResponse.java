@@ -13,6 +13,6 @@ public class HealthCheckLogResponse {
   private UUID id;
   private UUID platformId;
   private ServiceStatus status;
-  private long responseMs;
+  private Integer responseMs;
   private Instant createdAt;
 }

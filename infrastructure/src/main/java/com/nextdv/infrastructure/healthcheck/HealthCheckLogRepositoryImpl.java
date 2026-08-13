@@ -21,6 +21,7 @@ public class HealthCheckLogRepositoryImpl implements HealthCheckLogRepository {
         log.getId(),
         log.getPlatformId(),
         ServiceStatusEntity.valueOf(log.getStatus().name()),
+        log.getHttpStatusCode(),
         log.getResponseTimeMs(),
         log.getCheckedAt()
     );
@@ -42,6 +43,7 @@ public class HealthCheckLogRepositoryImpl implements HealthCheckLogRepository {
         entity.getId(),
         entity.getPlatformId(),
         ServiceStatus.valueOf(entity.getStatus().name()),
+        entity.getHttpStatusCode(),
         entity.getResponseTimeMs(),
         entity.getCheckedAt()
     );

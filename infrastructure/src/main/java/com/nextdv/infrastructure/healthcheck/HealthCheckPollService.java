@@ -29,7 +29,8 @@ public class HealthCheckPollService {
   private void poll(Platform platform) {
     long startMs = System.currentTimeMillis();
     ServiceStatus status;
-    long responseMs;
+    Integer responseMs;
+    Integer httpStatusCode;
     try {
       ResponseEntity<Void> response = healthCheckRestClient
           .get()
@@ -41,29 +42,33 @@ public class HealthCheckPollService {
               }
           )
           .toBodilessEntity();
-      responseMs = System.currentTimeMillis() - startMs;
+      responseMs = (int) (System.currentTimeMillis() - startMs);
+      httpStatusCode = response.getStatusCode().value();
       status = determineStatus(
-          response.getStatusCode().value(),
+          httpStatusCode,
           responseMs,
           platform.getDegradedThresholdMs()
       );
     } catch (ResourceAccessException e) {
-      responseMs = System.currentTimeMillis() - startMs;
+      responseMs = (int) (System.currentTimeMillis() - startMs);
+      httpStatusCode = null;
       status = ServiceStatus.MAJOR_OUTAGE;
     }
 
     healthCheckLogRepository.save(
         new HealthCheckLog(
-            UUID.randomUUID(), platform.getId(), status, responseMs, Instant.now()
+            UUID.randomUUID(), platform.getId(), status, httpStatusCode, responseMs, Instant.now()
         )
     );
   }
 
-  ServiceStatus determineStatus(int httpStatus, long responseMs, int degradedThresholdMs) {
-    if (httpStatus >= 500)
+  ServiceStatus determineStatus(int httpStatus, int responseMs, int degradedThresholdMs) {
+    if (httpStatus >= 500) {
       return ServiceStatus.MAJOR_OUTAGE;
-    if (responseMs >= degradedThresholdMs)
+    }
+    if (responseMs >= degradedThresholdMs) {
       return ServiceStatus.DEGRADED;
+    }
     return ServiceStatus.OPERATIONAL;
   }
 }

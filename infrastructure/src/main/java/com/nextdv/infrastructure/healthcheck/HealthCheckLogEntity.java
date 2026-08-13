@@ -27,18 +27,22 @@ public class HealthCheckLogEntity {
   @Column(nullable = false)
   private ServiceStatusEntity status;
 
-  @Column(name = "response_ms", nullable = false)
-  private long responseTimeMs;
+  @Column(name = "http_status_code")
+  private Integer httpStatusCode;
+
+  @Column(name = "response_ms")
+  private Integer responseTimeMs;
 
   @Column(name = "created_at", nullable = false)
   private Instant checkedAt;
 
   public HealthCheckLogEntity(
-      UUID id, UUID platformId, ServiceStatusEntity status, long responseTimeMs,
-      Instant checkedAt) {
+      UUID id, UUID platformId, ServiceStatusEntity status, Integer httpStatusCode,
+      Integer responseTimeMs, Instant checkedAt) {
     this.id = id;
     this.platformId = platformId;
     this.status = status;
+    this.httpStatusCode = httpStatusCode;
     this.responseTimeMs = responseTimeMs;
     this.checkedAt = checkedAt;
   }

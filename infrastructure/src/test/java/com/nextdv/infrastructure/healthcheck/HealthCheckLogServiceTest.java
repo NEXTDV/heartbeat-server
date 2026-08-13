@@ -53,12 +53,12 @@ class HealthCheckLogServiceTest {
     Instant newer = Instant.now();
     jpaRepository.save(
         new HealthCheckLogEntity(
-            UuidV7.generate(), platformId, ServiceStatusEntity.MAJOR_OUTAGE, 500L, older
+            UuidV7.generate(), platformId, ServiceStatusEntity.MAJOR_OUTAGE, null, 500, older
         )
     );
     jpaRepository.save(
         new HealthCheckLogEntity(
-            UuidV7.generate(), platformId, ServiceStatusEntity.OPERATIONAL, 200L, newer
+            UuidV7.generate(), platformId, ServiceStatusEntity.OPERATIONAL, null, 200, newer
         )
     );
 
@@ -82,12 +82,12 @@ class HealthCheckLogServiceTest {
     Instant now = Instant.now();
     jpaRepository.save(
         new HealthCheckLogEntity(
-            UuidV7.generate(), platformId, ServiceStatusEntity.OPERATIONAL, 200L, now
+            UuidV7.generate(), platformId, ServiceStatusEntity.OPERATIONAL, null, 200, now
         )
     );
     jpaRepository.save(
         new HealthCheckLogEntity(
-            UuidV7.generate(), platformId, ServiceStatusEntity.DEGRADED, 1500L, now
+            UuidV7.generate(), platformId, ServiceStatusEntity.DEGRADED, null, 1500, now
         )
     );
 
@@ -104,12 +104,12 @@ class HealthCheckLogServiceTest {
     Instant now = Instant.now();
     jpaRepository.save(
         new HealthCheckLogEntity(
-            UuidV7.generate(), platformId, ServiceStatusEntity.OPERATIONAL, 100L, now
+            UuidV7.generate(), platformId, ServiceStatusEntity.OPERATIONAL, null, 100, now
         )
     );
     jpaRepository.save(
         new HealthCheckLogEntity(
-            UuidV7.generate(), otherPlatformId, ServiceStatusEntity.MAJOR_OUTAGE, 100L, now
+            UuidV7.generate(), otherPlatformId, ServiceStatusEntity.MAJOR_OUTAGE, null, 100, now
         )
     );
 
