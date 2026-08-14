@@ -14,4 +14,6 @@ FROM eclipse-temurin:25-jre
 WORKDIR /app
 COPY --from=build /app/api/build/libs/ ./libs/
 RUN find ./libs -name "*.jar" ! -name "*-plain.jar" -exec cp {} app.jar \; && rm -rf ./libs
-ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-jar", "app.jar"]
+RUN useradd -r -u 10001 appuser && chown appuser:appuser app.jar
+USER 10001
+ENTRYPOINT ["java", "-jar", "app.jar"]
