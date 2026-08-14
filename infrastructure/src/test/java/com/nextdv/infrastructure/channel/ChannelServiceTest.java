@@ -127,4 +127,28 @@ class ChannelServiceTest {
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("채널을 찾을 수 없습니다.");
   }
+
+  @Test
+  void EMAIL_채널_config에_address가_없으면_예외가_발생한다() {
+    assertThatThrownBy(() -> channelService.create(
+            UUID.randomUUID(), ChannelType.EMAIL, "이메일", Map.of()))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("EMAIL 채널은 config.address가 필요합니다.");
+  }
+
+  @Test
+  void SLACK_채널_config에_url이_없으면_예외가_발생한다() {
+    assertThatThrownBy(() -> channelService.create(
+            UUID.randomUUID(), ChannelType.SLACK, "슬랙", Map.of()))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("SLACK 채널은 config.url이 필요합니다.");
+  }
+
+  @Test
+  void DISCORD_채널_config에_url이_없으면_예외가_발생한다() {
+    assertThatThrownBy(() -> channelService.create(
+            UUID.randomUUID(), ChannelType.DISCORD, "디스코드", Map.of()))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("DISCORD 채널은 config.url이 필요합니다.");
+  }
 }
