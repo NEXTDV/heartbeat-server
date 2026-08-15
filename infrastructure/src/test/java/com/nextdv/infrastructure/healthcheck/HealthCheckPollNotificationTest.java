@@ -12,7 +12,9 @@ import com.nextdv.infrastructure.channel.ChannelPlatformEntity;
 import com.nextdv.infrastructure.channel.ChannelPlatformJpaRepository;
 import com.nextdv.infrastructure.channel.ChannelRepositoryImpl;
 import com.nextdv.infrastructure.channel.ChannelTypeEntity;
+import com.nextdv.infrastructure.notification.FakeDiscordSender;
 import com.nextdv.infrastructure.notification.FakeEmailSender;
+import com.nextdv.infrastructure.notification.FakeSlackSender;
 import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
@@ -48,12 +50,18 @@ class HealthCheckPollNotificationTest {
   private ChannelRepository channelRepository;
 
   private FakeEmailSender fakeEmailSender;
+  private FakeSlackSender fakeSlackSender;
+  private FakeDiscordSender fakeDiscordSender;
   private HealthCheckPollService service;
 
   @BeforeEach
   void setUp() {
     fakeEmailSender = new FakeEmailSender();
-    service = new HealthCheckPollService(null, null, null, channelRepository, fakeEmailSender);
+    fakeSlackSender = new FakeSlackSender();
+    fakeDiscordSender = new FakeDiscordSender();
+    service = new HealthCheckPollService(
+        null, null, null, channelRepository, fakeEmailSender, fakeSlackSender, fakeDiscordSender
+    );
   }
 
   @Test
@@ -190,5 +198,59 @@ class HealthCheckPollNotificationTest {
     );
 
     assertThat(fakeEmailSender.getSentAddresses()).hasSize(1);
+  }
+
+  @Test
+  void 상태변화_시_Slack_채널에_알림이_발송된다() {
+    UUID platformId = UUID.randomUUID();
+    UUID channelId = UUID.randomUUID();
+    Instant now = Instant.now();
+
+    channelJpaRepository.save(
+        new ChannelEntity(
+            channelId, UUID.randomUUID(), ChannelTypeEntity.SLACK,
+            "슬랙", Map.of("url", "https://hooks.slack.com/test"), now, now, null
+        )
+    );
+    channelPlatformJpaRepository.save(
+        new ChannelPlatformEntity(UUID.randomUUID(), channelId, platformId, now)
+    );
+
+    Platform platform = new Platform(
+        platformId, "GitHub", ServiceCategory.DEVTOOL,
+        "https://github.com", 5000, 2000, null, true
+    );
+
+    service.notifyStatusChange(platform, ServiceStatus.OPERATIONAL, ServiceStatus.MAJOR_OUTAGE);
+
+    assertThat(fakeSlackSender.getSentUrls()).containsExactly("https://hooks.slack.com/test");
+  }
+
+  @Test
+  void 상태변화_시_Discord_채널에_알림이_발송된다() {
+    UUID platformId = UUID.randomUUID();
+    UUID channelId = UUID.randomUUID();
+    Instant now = Instant.now();
+
+    channelJpaRepository.save(
+        new ChannelEntity(
+            channelId, UUID.randomUUID(), ChannelTypeEntity.DISCORD,
+            "디스코드", Map.of("url", "https://discord.com/api/webhooks/test"), now, now, null
+        )
+    );
+    channelPlatformJpaRepository.save(
+        new ChannelPlatformEntity(UUID.randomUUID(), channelId, platformId, now)
+    );
+
+    Platform platform = new Platform(
+        platformId, "GitHub", ServiceCategory.DEVTOOL,
+        "https://github.com", 5000, 2000, null, true
+    );
+
+    service.notifyStatusChange(platform, ServiceStatus.OPERATIONAL, ServiceStatus.MAJOR_OUTAGE);
+
+    assertThat(fakeDiscordSender.getSentUrls()).containsExactly(
+        "https://discord.com/api/webhooks/test"
+    );
   }
 }
