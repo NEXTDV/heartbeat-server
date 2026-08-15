@@ -1,7 +1,9 @@
 package com.nextdv.infrastructure.healthcheck;
 
 import com.nextdv.domain.channel.ChannelRepository;
+import com.nextdv.domain.channel.DiscordSender;
 import com.nextdv.domain.channel.EmailSender;
+import com.nextdv.domain.channel.SlackSender;
 import com.nextdv.domain.healthcheck.HealthCheckLog;
 import com.nextdv.domain.healthcheck.HealthCheckLogRepository;
 import com.nextdv.domain.healthcheck.ServiceStatus;
@@ -27,6 +29,8 @@ public class HealthCheckPollService {
   private final RestClient healthCheckRestClient;
   private final ChannelRepository channelRepository;
   private final EmailSender emailSender;
+  private final SlackSender slackSender;
+  private final DiscordSender discordSender;
 
   public void pollAll() {
     platformService.findAll().forEach(this::poll);
@@ -96,6 +100,40 @@ public class HealthCheckPollService {
             "이메일 발송 실패 — 채널: {}, 주소: {}",
             channel.getId(),
             address,
+            e
+        );
+      }
+    });
+    channelRepository.findSlackChannelsByPlatformId(platform.getId()).forEach(channel -> {
+      String url = (String) channel.getConfig().get("url");
+      try {
+        slackSender.send(
+            url,
+            platform,
+            current
+        );
+      } catch (Exception e) {
+        log.error(
+            "Slack 발송 실패 — 채널: {}, URL: {}",
+            channel.getId(),
+            url,
+            e
+        );
+      }
+    });
+    channelRepository.findDiscordChannelsByPlatformId(platform.getId()).forEach(channel -> {
+      String url = (String) channel.getConfig().get("url");
+      try {
+        discordSender.send(
+            url,
+            platform,
+            current
+        );
+      } catch (Exception e) {
+        log.error(
+            "Discord 발송 실패 — 채널: {}, URL: {}",
+            channel.getId(),
+            url,
             e
         );
       }

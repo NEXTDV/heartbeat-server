@@ -13,4 +13,8 @@ public interface ChannelRepository {
   Optional<Channel> findById(UUID id);
 
   List<Channel> findEmailChannelsByPlatformId(UUID platformId);
+
+  List<Channel> findSlackChannelsByPlatformId(UUID platformId);
+
+  List<Channel> findDiscordChannelsByPlatformId(UUID platformId);
 }

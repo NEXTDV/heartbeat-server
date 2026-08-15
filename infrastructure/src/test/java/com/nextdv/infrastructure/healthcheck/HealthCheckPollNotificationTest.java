@@ -209,7 +209,10 @@ class HealthCheckPollNotificationTest {
     channelJpaRepository.save(
         new ChannelEntity(
             channelId, UUID.randomUUID(), ChannelTypeEntity.SLACK,
-            "슬랙", Map.of("url", "https://hooks.slack.com/test"), now, now, null
+            "슬랙", Map.of(
+                "url",
+                "https://hooks.slack.com/test"
+            ), now, now, null
         )
     );
     channelPlatformJpaRepository.save(
@@ -221,7 +224,11 @@ class HealthCheckPollNotificationTest {
         "https://github.com", 5000, 2000, null, true
     );
 
-    service.notifyStatusChange(platform, ServiceStatus.OPERATIONAL, ServiceStatus.MAJOR_OUTAGE);
+    service.notifyStatusChange(
+        platform,
+        ServiceStatus.OPERATIONAL,
+        ServiceStatus.MAJOR_OUTAGE
+    );
 
     assertThat(fakeSlackSender.getSentUrls()).containsExactly("https://hooks.slack.com/test");
   }
@@ -235,7 +242,10 @@ class HealthCheckPollNotificationTest {
     channelJpaRepository.save(
         new ChannelEntity(
             channelId, UUID.randomUUID(), ChannelTypeEntity.DISCORD,
-            "디스코드", Map.of("url", "https://discord.com/api/webhooks/test"), now, now, null
+            "디스코드", Map.of(
+                "url",
+                "https://discord.com/api/webhooks/test"
+            ), now, now, null
         )
     );
     channelPlatformJpaRepository.save(
@@ -247,7 +257,11 @@ class HealthCheckPollNotificationTest {
         "https://github.com", 5000, 2000, null, true
     );
 
-    service.notifyStatusChange(platform, ServiceStatus.OPERATIONAL, ServiceStatus.MAJOR_OUTAGE);
+    service.notifyStatusChange(
+        platform,
+        ServiceStatus.OPERATIONAL,
+        ServiceStatus.MAJOR_OUTAGE
+    );
 
     assertThat(fakeDiscordSender.getSentUrls()).containsExactly(
         "https://discord.com/api/webhooks/test"
