@@ -41,8 +41,8 @@ class ChannelServiceTest {
   void 채널을_생성하면_저장하고_반환한다() {
     UUID userId = UUID.randomUUID();
     Map<String, Object> config = Map.of(
-        "webhook",
-        "https://example.com"
+        "url",
+        "https://hooks.slack.com/example"
     );
 
     Channel result = channelService.create(
@@ -87,7 +87,10 @@ class ChannelServiceTest {
         userId,
         ChannelType.EMAIL,
         "이메일",
-        Map.of()
+        Map.of(
+            "address",
+            "test@example.com"
+        )
     );
 
     channelService.delete(created.getId());
@@ -103,13 +106,19 @@ class ChannelServiceTest {
         userId,
         ChannelType.SLACK,
         "활성 채널",
-        Map.of()
+        Map.of(
+            "url",
+            "https://hooks.slack.com/active"
+        )
     );
     Channel deleted = channelService.create(
         userId,
         ChannelType.DISCORD,
         "삭제된 채널",
-        Map.of()
+        Map.of(
+            "url",
+            "https://discord.com/api/webhooks/deleted"
+        )
     );
     channelService.delete(deleted.getId());
 
@@ -126,5 +135,47 @@ class ChannelServiceTest {
     assertThatThrownBy(() -> channelService.delete(channelId))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("채널을 찾을 수 없습니다.");
+  }
+
+  @Test
+  void EMAIL_채널_config에_address가_없으면_예외가_발생한다() {
+    assertThatThrownBy(
+        () -> channelService.create(
+            UUID.randomUUID(),
+            ChannelType.EMAIL,
+            "이메일",
+            Map.of()
+        )
+    )
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("EMAIL 채널은 config.address가 필요합니다.");
+  }
+
+  @Test
+  void SLACK_채널_config에_url이_없으면_예외가_발생한다() {
+    assertThatThrownBy(
+        () -> channelService.create(
+            UUID.randomUUID(),
+            ChannelType.SLACK,
+            "슬랙",
+            Map.of()
+        )
+    )
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("SLACK 채널은 config.url이 필요합니다.");
+  }
+
+  @Test
+  void DISCORD_채널_config에_url이_없으면_예외가_발생한다() {
+    assertThatThrownBy(
+        () -> channelService.create(
+            UUID.randomUUID(),
+            ChannelType.DISCORD,
+            "디스코드",
+            Map.of()
+        )
+    )
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("DISCORD 채널은 config.url이 필요합니다.");
   }
 }
