@@ -1,6 +1,7 @@
 package com.nextdv.infrastructure.account;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.nextdv.domain.account.Account;
 import com.nextdv.domain.account.AccountService;
@@ -25,9 +26,7 @@ class AccountServiceTest {
 
   @Container
   @ServiceConnection
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-      "postgres:16-alpine"
-  );
+  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
 
   @Autowired
   private AccountJpaRepository jpaRepository;
@@ -61,5 +60,19 @@ class AccountServiceTest {
     assertThat(account.getId()).isNotNull();
     assertThat(account.getEmail()).isEqualTo("new@nextdv.com");
     assertThat(accountService.findAll()).hasSize(1);
+  }
+
+  @Test
+  void 이메일이_blank이면_예외가_발생한다() {
+    assertThatThrownBy(() -> accountService.create(""))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  void 중복_이메일로_생성하면_예외가_발생한다() {
+    accountService.create("dup@nextdv.com");
+
+    assertThatThrownBy(() -> accountService.create("dup@nextdv.com"))
+        .isInstanceOf(IllegalStateException.class);
   }
 }
