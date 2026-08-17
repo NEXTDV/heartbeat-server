@@ -33,6 +33,7 @@
     <allow pkg="jakarta"/>
     <allow pkg="lombok"/>
     <allow pkg="org.springframework"/>
+    <allow pkg="io.swagger.v3"/>
     <allow pkg="com.nextdv.domain"/>
     <allow pkg="com.nextdv.api"/>
     <disallow pkg="com.nextdv.infrastructure"/>
