@@ -1,6 +1,7 @@
 package com.nextdv.infrastructure.account;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.nextdv.domain.account.Account;
 import com.nextdv.domain.account.AccountService;
@@ -52,5 +53,19 @@ class AccountServiceTest {
     List<Account> result = accountService.findAll();
 
     assertThat(result).isEmpty();
+  }
+
+  @Test
+  void 이메일이_blank이면_예외가_발생한다() {
+    assertThatThrownBy(() -> accountService.create(""))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  void 중복_이메일로_생성하면_예외가_발생한다() {
+    accountService.create("dup@nextdv.com");
+
+    assertThatThrownBy(() -> accountService.create("dup@nextdv.com"))
+        .isInstanceOf(IllegalStateException.class);
   }
 }
