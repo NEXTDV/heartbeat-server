@@ -18,4 +18,12 @@ public class AccountRepositoryImpl implements AccountRepository {
         .map(entity -> new Account(entity.getId(), entity.getEmail()))
         .toList();
   }
+
+  @Override
+  public Account save(Account account) {
+    AccountEntity saved = accountJpaRepository.save(
+        new AccountEntity(account.getId(), account.getEmail())
+    );
+    return new Account(saved.getId(), saved.getEmail());
+  }
 }
