@@ -9,6 +9,7 @@ import com.nextdv.domain.channel.ChannelType;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,7 +134,7 @@ class ChannelServiceTest {
     UUID channelId = UUID.randomUUID();
 
     assertThatThrownBy(() -> channelService.delete(channelId))
-        .isInstanceOf(IllegalArgumentException.class)
+        .isInstanceOf(NoSuchElementException.class)
         .hasMessage("채널을 찾을 수 없습니다.");
   }
 
