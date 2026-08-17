@@ -1,11 +1,12 @@
 package com.nextdv.api.channel;
 
-import com.nextdv.api.common.ApiResponse;
+import com.nextdv.api.common.CommonResponse;
 import com.nextdv.domain.channel.Channel;
 import com.nextdv.domain.channel.ChannelService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,7 +29,9 @@ public class ChannelController {
   }
 
   @PostMapping
-  public ResponseEntity<ApiResponse<ChannelResponse>> create(
+  @ApiResponse(responseCode = "400", description = "userId, type, name, config 필수 필드 누락 또는 형식 오류")
+  @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+  public ResponseEntity<CommonResponse<ChannelResponse>> create(
       @Valid @RequestBody ChannelRequest request) {
     Channel channel = channelService.create(
         request.getUserId(),
@@ -37,19 +40,23 @@ public class ChannelController {
         request.getConfig()
     );
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(ApiResponse.ok(ChannelMapper.toResponse(channel)));
+        .body(CommonResponse.ok(ChannelMapper.toResponse(channel)));
   }
 
   @GetMapping
-  public ResponseEntity<ApiResponse<List<ChannelResponse>>> list(
-      @RequestParam UUID userId) {
+  @ApiResponse(responseCode = "400", description = "userId 파라미터 누락 또는 UUID 형식이 아님")
+  @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+  public ResponseEntity<CommonResponse<List<ChannelResponse>>> list(@RequestParam UUID userId) {
     List<Channel> channels = channelService.findAllByUserId(userId);
-    return ResponseEntity.ok(ApiResponse.ok(ChannelMapper.toResponseList(channels)));
+    return ResponseEntity.ok(CommonResponse.ok(ChannelMapper.toResponseList(channels)));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
+  @ApiResponse(responseCode = "400", description = "id가 UUID 형식이 아님")
+  @ApiResponse(responseCode = "404", description = "해당 ID에 해당하는 채널이 존재하지 않음")
+  @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+  public ResponseEntity<CommonResponse<Void>> delete(@PathVariable UUID id) {
     channelService.delete(id);
-    return ResponseEntity.ok(ApiResponse.ok(null));
+    return ResponseEntity.ok(CommonResponse.ok(null));
   }
 }

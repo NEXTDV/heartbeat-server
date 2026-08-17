@@ -3,6 +3,7 @@ package com.nextdv.domain.channel;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -56,7 +57,7 @@ public class ChannelService {
   public void delete(UUID id) {
     Channel channel = channelRepository
         .findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("채널을 찾을 수 없습니다."));
+        .orElseThrow(() -> new NoSuchElementException("채널을 찾을 수 없습니다."));
     Channel deleted = new Channel(
         channel.getId(),
         channel.getUserId(),
