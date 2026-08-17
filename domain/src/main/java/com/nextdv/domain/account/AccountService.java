@@ -16,6 +16,12 @@ public class AccountService {
   }
 
   public Account create(String email) {
+    if (email == null || email.isBlank()) {
+      throw new IllegalArgumentException("이메일은 필수입니다.");
+    }
+    if (accountRepository.existsByEmail(email)) {
+      throw new IllegalStateException("이미 사용 중인 이메일입니다.");
+    }
     return accountRepository.save(new Account(UUID.randomUUID(), email));
   }
 }

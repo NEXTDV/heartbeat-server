@@ -4,6 +4,7 @@ import com.nextdv.domain.account.Account;
 import com.nextdv.domain.account.AccountRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -21,9 +22,17 @@ public class AccountRepositoryImpl implements AccountRepository {
 
   @Override
   public Account save(Account account) {
-    AccountEntity saved = accountJpaRepository.save(
-        new AccountEntity(account.getId(), account.getEmail())
-    );
-    return new Account(saved.getId(), saved.getEmail());
+    try {
+      AccountEntity saved = accountJpaRepository
+          .save(new AccountEntity(account.getId(), account.getEmail()));
+      return new Account(saved.getId(), saved.getEmail());
+    } catch (DataIntegrityViolationException e) {
+      throw new IllegalStateException("이미 사용 중인 이메일입니다.");
+    }
+  }
+
+  @Override
+  public boolean existsByEmail(String email) {
+    return accountJpaRepository.existsByEmail(email);
   }
 }
