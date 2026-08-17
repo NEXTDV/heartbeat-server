@@ -11,4 +11,6 @@ public interface ChannelRepository {
   List<Channel> findAllByUserId(UUID userId);
 
   Optional<Channel> findById(UUID id);
+
+  List<Channel> findEmailChannelsByPlatformId(UUID platformId);
 }
