@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.nextdv.domain.channel.ChannelPlatform;
 import com.nextdv.domain.channel.ChannelPlatformService;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,18 @@ class ChannelPlatformServiceTest {
     assertThat(entity.getChannelId()).isEqualTo(channelId);
     assertThat(entity.getPlatformId()).isEqualTo(platformId);
     assertThat(entity.getDeletedAt()).isNull();
+  }
+
+  @Test
+  void 존재하지_않는_채널ID로_구독하면_예외가_발생한다() {
+    assertThatThrownBy(
+        () -> channelPlatformService.subscribe(
+            UUID.randomUUID(),
+            UUID.randomUUID()
+        )
+    )
+        .isInstanceOf(NoSuchElementException.class)
+        .hasMessage("채널을 찾을 수 없습니다.");
   }
 
   @Test
