@@ -3,6 +3,7 @@ package com.nextdv.api.channel;
 import com.nextdv.api.common.ApiResponse;
 import com.nextdv.domain.channel.ChannelPlatform;
 import com.nextdv.domain.channel.ChannelPlatformService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ public class ChannelPlatformController {
 
   @PostMapping
   public ResponseEntity<ApiResponse<ChannelPlatformResponse>> subscribe(
-      @RequestBody ChannelPlatformRequest request) {
+      @Valid @RequestBody ChannelPlatformRequest request) {
     ChannelPlatform channelPlatform = channelPlatformService.subscribe(
         request.getChannelId(),
         request.getPlatformId()

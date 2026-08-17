@@ -5,6 +5,7 @@ import com.nextdv.domain.channel.Channel;
 import com.nextdv.domain.channel.ChannelService;
 import java.util.List;
 import java.util.UUID;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,7 +28,8 @@ public class ChannelController {
   }
 
   @PostMapping
-  public ResponseEntity<ApiResponse<ChannelResponse>> create(@RequestBody ChannelRequest request) {
+  public ResponseEntity<ApiResponse<ChannelResponse>> create(
+      @Valid @RequestBody ChannelRequest request) {
     Channel channel = channelService.create(
         request.getUserId(),
         request.getType(),
