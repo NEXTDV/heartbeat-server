@@ -15,6 +15,6 @@ public interface ChannelJpaRepository extends JpaRepository<ChannelEntity, UUID>
       + "  SELECT cp.channelId FROM ChannelPlatformEntity cp "
       + "  WHERE cp.platformId = :platformId AND cp.deletedAt IS NULL"
       + ") AND c.deletedAt IS NULL AND c.type = :type")
-  List<ChannelEntity> findEmailChannelsByPlatformId(
+  List<ChannelEntity> findChannelsByPlatformIdAndType(
       @Param("platformId") UUID platformId, @Param("type") ChannelTypeEntity type);
 }

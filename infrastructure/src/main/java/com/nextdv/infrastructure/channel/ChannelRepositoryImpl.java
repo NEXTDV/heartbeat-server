@@ -36,9 +36,33 @@ public class ChannelRepositoryImpl implements ChannelRepository {
   @Override
   public List<Channel> findEmailChannelsByPlatformId(UUID platformId) {
     return channelJpaRepository
-        .findEmailChannelsByPlatformId(
+        .findChannelsByPlatformIdAndType(
             platformId,
             ChannelTypeEntity.EMAIL
+        )
+        .stream()
+        .map(this::toDomain)
+        .toList();
+  }
+
+  @Override
+  public List<Channel> findSlackChannelsByPlatformId(UUID platformId) {
+    return channelJpaRepository
+        .findChannelsByPlatformIdAndType(
+            platformId,
+            ChannelTypeEntity.SLACK
+        )
+        .stream()
+        .map(this::toDomain)
+        .toList();
+  }
+
+  @Override
+  public List<Channel> findDiscordChannelsByPlatformId(UUID platformId) {
+    return channelJpaRepository
+        .findChannelsByPlatformIdAndType(
+            platformId,
+            ChannelTypeEntity.DISCORD
         )
         .stream()
         .map(this::toDomain)
