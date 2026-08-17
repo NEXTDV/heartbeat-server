@@ -53,4 +53,13 @@ class AccountServiceTest {
 
     assertThat(result).isEmpty();
   }
+
+  @Test
+  void 이메일로_계정을_생성한다() {
+    Account account = accountService.create("new@nextdv.com");
+
+    assertThat(account.getId()).isNotNull();
+    assertThat(account.getEmail()).isEqualTo("new@nextdv.com");
+    assertThat(accountService.findAll()).hasSize(1);
+  }
 }
