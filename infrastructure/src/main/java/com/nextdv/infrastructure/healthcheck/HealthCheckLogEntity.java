@@ -1,10 +1,14 @@
 package com.nextdv.infrastructure.healthcheck;
 
+import com.nextdv.infrastructure.platform.PlatformEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
@@ -22,6 +26,10 @@ public class HealthCheckLogEntity {
 
   @Column(name = "platform_id", nullable = false)
   private UUID platformId;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "platform_id", insertable = false, updatable = false)
+  private PlatformEntity platform;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
