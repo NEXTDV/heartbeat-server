@@ -10,8 +10,12 @@ import com.nextdv.infrastructure.channel.ChannelEntity;
 import com.nextdv.infrastructure.channel.ChannelJpaRepository;
 import com.nextdv.infrastructure.channel.ChannelPlatformEntity;
 import com.nextdv.infrastructure.channel.ChannelPlatformJpaRepository;
+import com.nextdv.domain.channel.ChannelPlatformRepository;
+import com.nextdv.domain.deliverylog.DeliveryLogRepository;
+import com.nextdv.infrastructure.channel.ChannelPlatformRepositoryImpl;
 import com.nextdv.infrastructure.channel.ChannelRepositoryImpl;
 import com.nextdv.infrastructure.channel.ChannelTypeEntity;
+import com.nextdv.infrastructure.deliverylog.DeliveryLogRepositoryImpl;
 import com.nextdv.infrastructure.deliverylog.DeliveryLogJpaRepository;
 import com.nextdv.infrastructure.deliverylog.DeliveryStatusEntity;
 import com.nextdv.infrastructure.notification.FakeDiscordSender;
@@ -34,7 +38,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Import(ChannelRepositoryImpl.class)
+@Import({ChannelRepositoryImpl.class, ChannelPlatformRepositoryImpl.class,
+    DeliveryLogRepositoryImpl.class})
 @Testcontainers
 class HealthCheckPollNotificationTest {
 
@@ -54,6 +59,12 @@ class HealthCheckPollNotificationTest {
   @Autowired
   private DeliveryLogJpaRepository deliveryLogJpaRepository;
 
+  @Autowired
+  private ChannelPlatformRepository channelPlatformRepository;
+
+  @Autowired
+  private DeliveryLogRepository deliveryLogRepository;
+
   private FakeEmailSender fakeEmailSender;
   private FakeSlackSender fakeSlackSender;
   private FakeDiscordSender fakeDiscordSender;
@@ -65,7 +76,8 @@ class HealthCheckPollNotificationTest {
     fakeSlackSender = new FakeSlackSender();
     fakeDiscordSender = new FakeDiscordSender();
     service = new HealthCheckPollService(
-        null, null, null, channelRepository, fakeEmailSender, fakeSlackSender, fakeDiscordSender
+        null, null, null, channelRepository, fakeEmailSender, fakeSlackSender,
+        fakeDiscordSender, channelPlatformRepository, deliveryLogRepository
     );
   }
 
