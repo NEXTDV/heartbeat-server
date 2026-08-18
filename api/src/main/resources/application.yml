@@ -22,8 +22,8 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
 
-server:
-  forward-headers-strategy: framework
+app:
+  swagger-server-url: ${APP_SWAGGER_SERVER_URL:}
 
 springdoc:
   swagger-ui:

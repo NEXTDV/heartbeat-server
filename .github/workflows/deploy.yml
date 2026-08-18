@@ -53,5 +53,7 @@ jobs:
             sudo kubectl apply -f ~/heartbeat-k3s/k3s/service.yaml
             sudo kubectl apply -f ~/heartbeat-k3s/k3s/deployment.yaml
             sudo kubectl apply -f ~/heartbeat-k3s/k3s/ingress.yaml
+            sudo kubectl patch secret heartbeat-secret -n heartbeat \
+              --patch='{"stringData":{"APP_SWAGGER_SERVER_URL":"${{ secrets.APP_SWAGGER_SERVER_URL }}"}}'
             sudo kubectl rollout restart deployment/heartbeat -n heartbeat
             sudo kubectl rollout status deployment/heartbeat -n heartbeat --timeout=120s
