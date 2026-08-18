@@ -2,6 +2,7 @@ package com.nextdv.infrastructure.channel;
 
 import com.nextdv.domain.channel.ChannelPlatform;
 import com.nextdv.domain.channel.ChannelPlatformRepository;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -18,6 +19,23 @@ public class ChannelPlatformRepositoryImpl implements ChannelPlatformRepository 
         channelId,
         platformId
     );
+  }
+
+  @Override
+  public Optional<ChannelPlatform> findByChannelIdAndPlatformId(UUID channelId, UUID platformId) {
+    return jpaRepository
+        .findByChannelIdAndPlatformIdAndDeletedAtIsNull(
+            channelId,
+            platformId
+        )
+        .map(
+            entity -> new ChannelPlatform(
+                entity.getId(),
+                entity.getChannelId(),
+                entity.getPlatformId(),
+                entity.getCreatedAt()
+            )
+        );
   }
 
   @Override
