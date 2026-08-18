@@ -28,3 +28,90 @@ server:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+
+heartbeat:
+  platforms:
+    - name: Claude
+      category: AI
+      healthCheckUrl: https://status.anthropic.com/api/v2/summary.json
+      timeoutMs: 5000
+      degradedThresholdMs: 2000
+      iconUrl: https://www.anthropic.com/favicon.ico
+    - name: ChatGPT
+      category: AI
+      healthCheckUrl: https://status.openai.com/api/v2/summary.json
+      timeoutMs: 5000
+      degradedThresholdMs: 2000
+      iconUrl: https://openai.com/favicon.ico
+    - name: Gemini
+      category: AI
+      healthCheckUrl: https://status.cloud.google.com/incidents.json
+      timeoutMs: 5000
+      degradedThresholdMs: 2000
+      iconUrl: https://www.gstatic.com/lamda/images/gemini_favicon_f069958c85030456e93de685481c559f160ea06.svg
+    - name: GitHub
+      category: DEVTOOL
+      healthCheckUrl: https://www.githubstatus.com/api/v2/summary.json
+      timeoutMs: 5000
+      degradedThresholdMs: 2000
+      iconUrl: https://github.com/favicon.ico
+    - name: AWS
+      category: CLOUD
+      healthCheckUrl: https://status.aws.amazon.com/rss/all.rss
+      timeoutMs: 5000
+      degradedThresholdMs: 2000
+      iconUrl: https://a0.awsstatic.com/libra-css/images/logos/aws_logo_smile_1200x630.png
+    - name: Azure
+      category: CLOUD
+      healthCheckUrl: https://azure.status.microsoft/en-us/status/feed/
+      timeoutMs: 5000
+      degradedThresholdMs: 2000
+      iconUrl: https://azure.microsoft.com/favicon.ico
+    - name: GCP
+      category: CLOUD
+      healthCheckUrl: https://status.cloud.google.com/incidents.json
+      timeoutMs: 5000
+      degradedThresholdMs: 2000
+      iconUrl: https://cloud.google.com/favicon.ico
+    - name: Slack
+      category: COMMUNICATION
+      healthCheckUrl: https://status.slack.com/api/v2.0.0/current
+      timeoutMs: 5000
+      degradedThresholdMs: 2000
+      iconUrl: https://slack.com/favicon.ico
+    - name: Discord
+      category: COMMUNICATION
+      healthCheckUrl: https://discordstatus.com/api/v2/summary.json
+      timeoutMs: 5000
+      degradedThresholdMs: 2000
+      iconUrl: https://discord.com/favicon.ico
+    - name: Notion
+      category: DEVTOOL
+      healthCheckUrl: https://status.notion.so/api/v2/summary.json
+      timeoutMs: 5000
+      degradedThresholdMs: 2000
+      iconUrl: https://www.notion.so/favicon.ico
+    - name: Cloudflare
+      category: CLOUD
+      healthCheckUrl: https://www.cloudflarestatus.com/api/v2/summary.json
+      timeoutMs: 5000
+      degradedThresholdMs: 2000
+      iconUrl: https://www.cloudflare.com/favicon.ico
+    - name: Vercel
+      category: CLOUD
+      healthCheckUrl: https://www.vercel-status.com/api/v2/summary.json
+      timeoutMs: 5000
+      degradedThresholdMs: 2000
+      iconUrl: https://vercel.com/favicon.ico
+    - name: Datadog
+      category: DEVTOOL
+      healthCheckUrl: https://status.datadoghq.com/api/v2/summary.json
+      timeoutMs: 5000
+      degradedThresholdMs: 2000
+      iconUrl: https://www.datadoghq.com/favicon.ico
+    - name: Jira
+      category: DEVTOOL
+      healthCheckUrl: https://jira-software.status.atlassian.com/api/v2/summary.json
+      timeoutMs: 5000
+      degradedThresholdMs: 2000
+      iconUrl: https://wac-cdn.atlassian.com/assets/img/favicons/atlassian/favicon.png
