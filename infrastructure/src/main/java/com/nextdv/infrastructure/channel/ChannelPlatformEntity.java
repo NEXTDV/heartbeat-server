@@ -1,8 +1,12 @@
 package com.nextdv.infrastructure.channel;
 
+import com.nextdv.infrastructure.platform.PlatformEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
@@ -19,8 +23,16 @@ public class ChannelPlatformEntity {
   @Column(name = "channel_id", nullable = false)
   private UUID channelId;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "channel_id", insertable = false, updatable = false)
+  private ChannelEntity channel;
+
   @Column(name = "platform_id", nullable = false)
   private UUID platformId;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "platform_id", insertable = false, updatable = false)
+  private PlatformEntity platform;
 
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
