@@ -22,6 +22,12 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+
 app:
   swagger-server-url: ${APP_SWAGGER_SERVER_URL:}
 
