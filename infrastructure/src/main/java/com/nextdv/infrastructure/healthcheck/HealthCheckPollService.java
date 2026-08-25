@@ -19,6 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 
+/**
+ * 클래스명: HealthCheckPollService
+ * 작성자: JBumLee
+ *
+ * 플랫폼 헬스체크 폴링 및 상태 변화 알림 발송을 담당하는 서비스
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,6 +38,10 @@ public class HealthCheckPollService {
   private final SlackSender slackSender;
   private final DiscordSender discordSender;
 
+  /**
+   * 메소드이름: pollAll
+   * 활성화된 모든 플랫폼에 대해 헬스체크를 수행한다
+   */
   public void pollAll() {
     platformService.findAll().forEach(this::poll);
   }

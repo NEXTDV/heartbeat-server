@@ -11,6 +11,12 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 클래스명: HealthCheckLogEntity
+ * 작성자: JBumLee
+ *
+ * health_check_logs 테이블과 매핑되는 JPA 엔티티
+ */
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Entity

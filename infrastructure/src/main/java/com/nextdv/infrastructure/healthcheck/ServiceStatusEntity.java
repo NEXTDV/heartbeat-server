@@ -1,5 +1,11 @@
 package com.nextdv.infrastructure.healthcheck;
 
+/**
+ * 클래스명: ServiceStatusEntity
+ * 작성자: JBumLee
+ *
+ * DB 저장용 서비스 상태
+ */
 public enum ServiceStatusEntity {
   /** 정상 운영 중 */
   OPERATIONAL,

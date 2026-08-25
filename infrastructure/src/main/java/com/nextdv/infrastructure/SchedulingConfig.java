@@ -6,6 +6,12 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestClient;
 
+/**
+ * 클래스명: SchedulingConfig
+ * 작성자: JBumLee
+ *
+ * 스케줄링 활성화 및 헬스체크용 RestClient 빈 등록 설정
+ */
 @Configuration
 @EnableScheduling
 public class SchedulingConfig {

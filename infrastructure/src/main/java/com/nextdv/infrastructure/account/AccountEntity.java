@@ -6,6 +6,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.UUID;
 
+/**
+ * 클래스명: AccountEntity
+ * 작성자: JBumLee
+ *
+ * accounts 테이블과 매핑되는 JPA 엔티티
+ */
 @Entity
 @Table(name = "accounts")
 public class AccountEntity {
