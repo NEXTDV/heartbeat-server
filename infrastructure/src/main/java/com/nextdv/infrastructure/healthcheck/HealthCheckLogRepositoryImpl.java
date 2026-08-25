@@ -9,6 +9,12 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+/**
+ * 클래스명: HealthCheckLogRepositoryImpl
+ * 작성자: JBumLee
+ *
+ * HealthCheckLogRepository 인터페이스의 JPA 기반 구현체
+ */
 @Repository
 @RequiredArgsConstructor
 public class HealthCheckLogRepositoryImpl implements HealthCheckLogRepository {

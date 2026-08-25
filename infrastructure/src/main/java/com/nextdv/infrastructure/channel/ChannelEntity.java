@@ -15,6 +15,12 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+/**
+ * 클래스명: ChannelEntity
+ * 작성자: JBumLee
+ *
+ * channels 테이블과 매핑되는 JPA 엔티티
+ */
 @Entity
 @Table(name = "channels")
 @Getter
