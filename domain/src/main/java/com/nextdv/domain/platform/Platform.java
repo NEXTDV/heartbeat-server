@@ -3,6 +3,11 @@ package com.nextdv.domain.platform;
 import java.util.UUID;
 import lombok.Getter;
 
+/**
+ * class: Platform 작성자: JBumLee
+ *
+ * 헬스체크 대상 플랫폼 도메인 객체
+ */
 @Getter
 public class Platform {
 

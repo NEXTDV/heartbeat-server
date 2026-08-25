@@ -2,6 +2,11 @@ package com.nextdv.domain.account;
 
 import java.util.UUID;
 
+/**
+ * class: Account 작성자: JBumLee
+ *
+ * 사용자 계정 도메인 객체
+ */
 public class Account {
 
   private final UUID id;

@@ -8,6 +8,11 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+/**
+ * class: PlatformRepositoryImpl 작성자: JBumLee
+ *
+ * PlatformRepository 인터페이스의 JPA 기반 구현체
+ */
 @Repository
 @RequiredArgsConstructor
 public class PlatformRepositoryImpl implements PlatformRepository {

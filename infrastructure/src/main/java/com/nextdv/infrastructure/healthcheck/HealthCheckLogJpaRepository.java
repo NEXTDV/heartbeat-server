@@ -5,6 +5,11 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+/**
+ * class: HealthCheckLogJpaRepository 작성자: JBumLee
+ *
+ * health_check_logs 테이블 JPA 저장소 인터페이스
+ */
 public interface HealthCheckLogJpaRepository extends JpaRepository<HealthCheckLogEntity, UUID> {
 
   List<HealthCheckLogEntity> findAllByPlatformId(UUID platformId);

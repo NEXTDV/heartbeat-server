@@ -9,6 +9,11 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+/**
+ * class: ChannelRepositoryImpl 작성자: JBumLee
+ *
+ * ChannelRepository 인터페이스의 JPA 기반 구현체
+ */
 @Repository
 @RequiredArgsConstructor
 public class ChannelRepositoryImpl implements ChannelRepository {

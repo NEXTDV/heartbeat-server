@@ -8,6 +8,11 @@ import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
 
+/**
+ * class: ChannelPlatformEntity 작성자: JBumLee
+ *
+ * channel_platforms 테이블과 매핑되는 JPA 엔티티
+ */
 @Getter
 @Entity
 @Table(name = "channel_platforms")

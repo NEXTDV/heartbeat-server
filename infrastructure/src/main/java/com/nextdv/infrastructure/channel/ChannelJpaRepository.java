@@ -6,6 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+/**
+ * class: ChannelJpaRepository 작성자: JBumLee
+ *
+ * channels 테이블 JPA 저장소 인터페이스
+ */
 public interface ChannelJpaRepository extends JpaRepository<ChannelEntity, UUID> {
 
   List<ChannelEntity> findAllByUserIdAndDeletedAtIsNull(UUID userId);

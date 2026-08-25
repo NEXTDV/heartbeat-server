@@ -7,6 +7,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * class: SwaggerConfig 작성자: JBumLee
+ *
+ * Swagger UI 서버 URL 설정 (Traefik/Cloudflare 환경에서 https 강제)
+ */
 @Configuration
 public class SwaggerConfig {
 

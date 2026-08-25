@@ -7,6 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
+/**
+ * class: AccountRepositoryImpl 작성자: JBumLee
+ *
+ * AccountRepository 인터페이스의 JPA 기반 구현체
+ */
 @Repository
 @RequiredArgsConstructor
 public class AccountRepositoryImpl implements AccountRepository {

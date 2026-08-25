@@ -2,6 +2,11 @@ package com.nextdv.api.account;
 
 import java.util.UUID;
 
+/**
+ * class: AccountResponse 작성자: JBumLee
+ *
+ * 계정 조회 응답 DTO
+ */
 public class AccountResponse {
 
   private final UUID id;

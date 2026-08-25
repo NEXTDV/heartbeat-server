@@ -7,6 +7,11 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.Getter;
 
+/**
+ * class: ChannelRequest 작성자: JBumLee
+ *
+ * 채널 생성 요청 DTO
+ */
 @Getter
 public class ChannelRequest {
 

@@ -10,6 +10,11 @@ import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.Getter;
 
+/**
+ * class: PlatformEntity 작성자: JBumLee
+ *
+ * platforms 테이블과 매핑되는 JPA 엔티티
+ */
 @Getter
 @Entity
 @Table(name = "platforms")

@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * class: ChannelPlatformController 작성자: JBumLee
+ *
+ * 채널-플랫폼 구독 관련 REST API 엔드포인트를 제공하는 컨트롤러
+ */
 @RestController
 @RequestMapping("/channel-platforms")
 public class ChannelPlatformController {
@@ -22,6 +27,14 @@ public class ChannelPlatformController {
     this.channelPlatformService = channelPlatformService;
   }
 
+  /**
+   * 메소드이름: subscribe
+   *
+   * @parameter: request - 구독 요청 (channelId, platformId 포함)
+   * @return: 생성된 구독 정보 응답
+   *
+   *          채널과 플랫폼을 연결하는 구독을 생성한다
+   */
   @PostMapping
   @ApiResponse(responseCode = "400", description = "channelId 또는 platformId 누락 또는 UUID 형식이 아님")
   @ApiResponse(responseCode = "404", description = "해당 channelId 또는 platformId에 해당하는 리소스가 존재하지 않음")

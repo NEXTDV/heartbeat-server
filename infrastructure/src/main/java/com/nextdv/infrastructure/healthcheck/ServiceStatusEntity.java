@@ -1,14 +1,10 @@
 package com.nextdv.infrastructure.healthcheck;
 
+/**
+ * class: ServiceStatusEntity 작성자: JBumLee
+ *
+ * DB 저장용 서비스 상태 열거형
+ */
 public enum ServiceStatusEntity {
-  /** 정상 운영 중 */
-  OPERATIONAL,
-  /** 응답 지연 등 성능 저하 */
-  DEGRADED,
-  /** 일부 기능 장애 */
-  PARTIAL_OUTAGE,
-  /** 전면 장애 */
-  MAJOR_OUTAGE,
-  /** 상태 미확인 */
-  UNKNOWN
+  OPERATIONAL, DEGRADED, PARTIAL_OUTAGE, MAJOR_OUTAGE, UNKNOWN
 }
