@@ -5,6 +5,12 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.Getter;
 
+/**
+ * 클래스명: Channel
+ * 작성자: JBumLee
+ *
+ * 알림 채널 도메인 객체
+ */
 @Getter
 public class Channel {
 

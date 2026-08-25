@@ -7,6 +7,12 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * 클래스명: ChannelPlatformService
+ * 작성자: JBumLee
+ *
+ * 채널-플랫폼 구독 비즈니스 로직을 담당하는 서비스
+ */
 @Service
 @RequiredArgsConstructor
 public class ChannelPlatformService {
@@ -15,6 +21,13 @@ public class ChannelPlatformService {
   private final ChannelRepository channelRepository;
   private final PlatformRepository platformRepository;
 
+  /**
+   * 메소드이름: subscribe
+   * 채널과 플랫폼이 존재하고 중복 구독이 아닌 경우 구독을 생성한다
+   *
+   * @param channelId 구독할 채널 UUID, platformId - 구독할 플랫폼 UUID
+   * @return 생성된 채널-플랫폼 구독 객체
+   */
   public ChannelPlatform subscribe(UUID channelId, UUID platformId) {
     channelRepository
         .findById(channelId)
