@@ -57,6 +57,12 @@
     <!-- import 정렬 -->
     <setting id="org.eclipse.jdt.core.formatter.number_of_empty_lines_to_preserve" value="1"/>
 
+    <!-- JavaDoc 포맷 비활성화 -->
+    <setting id="org.eclipse.jdt.core.formatter.comment.format_javadoc_comments" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.comment.format_source_code" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.comment.format_block_comments" value="false"/>
+    <setting id="org.eclipse.jdt.core.formatter.comment.format_line_comments" value="false"/>
+
     <!-- 후행 공백 제거 -->
     <setting id="org.eclipse.jdt.core.formatter.remove_trailing_whitespaces" value="true"/>
     <setting id="org.eclipse.jdt.core.formatter.remove_trailing_whitespaces_all" value="true"/>

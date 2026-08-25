@@ -1,5 +1,11 @@
 package com.nextdv.domain.healthcheck;
 
+/**
+ * 클래스명: ServiceStatus
+ * 작성자: JBumLee
+ *
+ * 서비스 상태를 나타내는
+ */
 public enum ServiceStatus {
   /** 정상 운영 중 */
   OPERATIONAL,
