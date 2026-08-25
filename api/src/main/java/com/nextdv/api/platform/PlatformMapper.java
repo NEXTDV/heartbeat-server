@@ -3,11 +3,24 @@ package com.nextdv.api.platform;
 import com.nextdv.domain.platform.Platform;
 import java.util.List;
 
+/**
+ * 클래스명: PlatformMapper
+ * 작성자: JBumLee
+ *
+ * Platform 도메인 객체를 PlatformResponse DTO로 변환하는 매퍼
+ */
 public class PlatformMapper {
 
   private PlatformMapper() {
   }
 
+  /**
+   * 메소드이름: toResponse
+   * Platform 도메인 객체를 응답 DTO로 변환한다
+   *
+   * @param platform 변환할 플랫폼 도메인 객체
+   * @return PlatformResponse DTO
+   */
   public static PlatformResponse toResponse(Platform platform) {
     return new PlatformResponse(
         platform.getId(),
@@ -21,6 +34,13 @@ public class PlatformMapper {
     );
   }
 
+  /**
+   * 메소드이름: toResponseList
+   * Platform 도메인 객체 목록을 응답 DTO 목록으로 변환한다
+   *
+   * @param platforms 변환할 플랫폼 도메인 객체 목록
+   * @return PlatformResponse DTO 목록
+   */
   public static List<PlatformResponse> toResponseList(List<Platform> platforms) {
     return platforms.stream()
         .map(PlatformMapper::toResponse)

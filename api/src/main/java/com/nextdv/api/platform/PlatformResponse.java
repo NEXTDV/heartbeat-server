@@ -4,6 +4,12 @@ import com.nextdv.domain.platform.ServiceCategory;
 import java.util.UUID;
 import lombok.Getter;
 
+/**
+ * 클래스명: PlatformResponse
+ * 작성자: JBumLee
+ *
+ * 플랫폼 조회 응답 DTO
+ */
 @Getter
 public class PlatformResponse {
 

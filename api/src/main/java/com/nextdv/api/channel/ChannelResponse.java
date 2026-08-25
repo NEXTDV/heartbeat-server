@@ -5,6 +5,12 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * 클래스명: ChannelResponse
+ * 작성자: JBumLee
+ *
+ * 채널 조회 응답 DTO
+ */
 public class ChannelResponse {
 
   private final UUID id;

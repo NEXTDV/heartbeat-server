@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 클래스명: PlatformController
+ * 작성자: JBumLee
+ *
+ * 플랫폼 조회 REST API 엔드포인트를 제공하는 컨트롤러
+ */
 @RestController
 @RequestMapping("/platforms")
 @RequiredArgsConstructor
@@ -21,6 +27,12 @@ public class PlatformController {
 
   private final PlatformService platformService;
 
+  /**
+   * 메소드이름: list
+   * 활성화 상태인 모든 플랫폼을 조회한다
+   *
+   * @return 활성화된 플랫폼 목록 응답
+   */
   @GetMapping
   @ApiResponse(responseCode = "500", description = "서버 내부 오류")
   public ResponseEntity<CommonResponse<List<PlatformResponse>>> list() {
@@ -28,6 +40,13 @@ public class PlatformController {
     return ResponseEntity.ok(CommonResponse.ok(PlatformMapper.toResponseList(platforms)));
   }
 
+  /**
+   * 메소드이름: findById
+   * ID로 특정 플랫폼을 조회한다
+   *
+   * @param id 조회할 플랫폼 UUID
+   * @return 플랫폼 응답
+   */
   @GetMapping("/{id}")
   @ApiResponse(responseCode = "400", description = "id가 UUID 형식이 아님")
   @ApiResponse(responseCode = "404", description = "해당 ID에 해당하는 플랫폼이 존재하지 않음")

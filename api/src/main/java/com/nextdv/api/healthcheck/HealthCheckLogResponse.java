@@ -6,6 +6,12 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 클래스명: HealthCheckLogResponse
+ * 작성자: JBumLee
+ *
+ * 헬스체크 로그 응답 DTO
+ */
 @Getter
 @AllArgsConstructor
 public class HealthCheckLogResponse {
