@@ -10,14 +10,11 @@ import com.nextdv.domain.healthcheck.ServiceStatus;
 import com.nextdv.domain.platform.Platform;
 import com.nextdv.domain.platform.PlatformService;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestClient;
 
 @Slf4j
 @Service
@@ -26,7 +23,7 @@ public class HealthCheckPollService {
 
   private final PlatformService platformService;
   private final HealthCheckLogRepository healthCheckLogRepository;
-  private final RestClient healthCheckRestClient;
+  private final List<PlatformHealthChecker> healthCheckers;
   private final ChannelRepository channelRepository;
   private final EmailSender emailSender;
   private final SlackSender slackSender;
@@ -42,43 +39,26 @@ public class HealthCheckPollService {
         .map(HealthCheckLog::getStatus)
         .orElse(null);
 
-    long startMs = System.currentTimeMillis();
-    ServiceStatus status;
-    Integer responseMs;
-    Integer httpStatusCode;
-    try {
-      ResponseEntity<Void> response = healthCheckRestClient
-          .get()
-          .uri(platform.getHealthCheckUrl())
-          .retrieve()
-          .onStatus(
-              HttpStatusCode::isError,
-              (req, res) -> {
-              }
-          )
-          .toBodilessEntity();
-      responseMs = (int) (System.currentTimeMillis() - startMs);
-      httpStatusCode = response.getStatusCode().value();
-      status = determineStatus(
-          httpStatusCode,
-          responseMs,
-          platform.getDegradedThresholdMs()
-      );
-    } catch (ResourceAccessException e) {
-      responseMs = (int) (System.currentTimeMillis() - startMs);
-      httpStatusCode = null;
-      status = ServiceStatus.MAJOR_OUTAGE;
-    }
+    HealthCheckResult result = healthCheckers.stream()
+        .filter(c -> c.supports(platform))
+        .findFirst()
+        .orElseThrow()
+        .check(platform);
 
     notifyStatusChange(
         platform,
         previousStatus,
-        status
+        result.status()
     );
 
     healthCheckLogRepository.save(
         new HealthCheckLog(
-            UUID.randomUUID(), platform.getId(), status, httpStatusCode, responseMs, Instant.now()
+            UUID.randomUUID(),
+            platform.getId(),
+            result.status(),
+            result.httpStatusCode(),
+            result.responseTimeMs(),
+            Instant.now()
         )
     );
   }
@@ -87,66 +67,68 @@ public class HealthCheckPollService {
     if (previous == null || previous == current) {
       return;
     }
-    channelRepository.findEmailChannelsByPlatformId(platform.getId()).forEach(channel -> {
-      String address = (String) channel.getConfig().get("address");
-      try {
-        emailSender.send(
-            address,
-            platform,
-            current
+    channelRepository
+        .findEmailChannelsByPlatformId(platform.getId())
+        .forEach(
+            channel -> {
+              String address = (String) channel.getConfig().get("address");
+              try {
+                emailSender.send(
+                    address,
+                    platform,
+                    current
+                );
+              } catch (Exception e) {
+                log.error(
+                    "이메일 발송 실패 — 채널: {}, 주소: {}",
+                    channel.getId(),
+                    address,
+                    e
+                );
+              }
+            }
         );
-      } catch (Exception e) {
-        log.error(
-            "이메일 발송 실패 — 채널: {}, 주소: {}",
-            channel.getId(),
-            address,
-            e
+    channelRepository
+        .findSlackChannelsByPlatformId(platform.getId())
+        .forEach(
+            channel -> {
+              String url = (String) channel.getConfig().get("url");
+              try {
+                slackSender.send(
+                    url,
+                    platform,
+                    current
+                );
+              } catch (Exception e) {
+                log.error(
+                    "Slack 발송 실패 — 채널: {}, URL: {}",
+                    channel.getId(),
+                    url,
+                    e
+                );
+              }
+            }
         );
-      }
-    });
-    channelRepository.findSlackChannelsByPlatformId(platform.getId()).forEach(channel -> {
-      String url = (String) channel.getConfig().get("url");
-      try {
-        slackSender.send(
-            url,
-            platform,
-            current
+    channelRepository
+        .findDiscordChannelsByPlatformId(platform.getId())
+        .forEach(
+            channel -> {
+              String url = (String) channel.getConfig().get("url");
+              try {
+                discordSender.send(
+                    url,
+                    platform,
+                    current
+                );
+              } catch (Exception e) {
+                log.error(
+                    "Discord 발송 실패 — 채널: {}, URL: {}",
+                    channel.getId(),
+                    url,
+                    e
+                );
+              }
+            }
         );
-      } catch (Exception e) {
-        log.error(
-            "Slack 발송 실패 — 채널: {}, URL: {}",
-            channel.getId(),
-            url,
-            e
-        );
-      }
-    });
-    channelRepository.findDiscordChannelsByPlatformId(platform.getId()).forEach(channel -> {
-      String url = (String) channel.getConfig().get("url");
-      try {
-        discordSender.send(
-            url,
-            platform,
-            current
-        );
-      } catch (Exception e) {
-        log.error(
-            "Discord 발송 실패 — 채널: {}, URL: {}",
-            channel.getId(),
-            url,
-            e
-        );
-      }
-    });
-  }
-
-  ServiceStatus determineStatus(int httpStatus, int responseMs, int degradedThresholdMs) {
-    if (httpStatus >= 500) {
-      return ServiceStatus.MAJOR_OUTAGE;
-    }
-    if (responseMs >= degradedThresholdMs) {
-      return ServiceStatus.DEGRADED;
-    }
-    return ServiceStatus.OPERATIONAL;
   }
 }
