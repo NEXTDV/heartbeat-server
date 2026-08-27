@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 class HealthCheckPollServiceTest {
 
   private final HealthCheckPollService service = new HealthCheckPollService(
-      null, null, null, null, null, null, null
+      null, null, null, null, null, null, null, null, null
   );
 
   @Test

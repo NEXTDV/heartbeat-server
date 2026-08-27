@@ -10,8 +10,14 @@ import com.nextdv.infrastructure.channel.ChannelEntity;
 import com.nextdv.infrastructure.channel.ChannelJpaRepository;
 import com.nextdv.infrastructure.channel.ChannelPlatformEntity;
 import com.nextdv.infrastructure.channel.ChannelPlatformJpaRepository;
+import com.nextdv.domain.channel.ChannelPlatformRepository;
+import com.nextdv.domain.deliverylog.DeliveryLogRepository;
+import com.nextdv.infrastructure.channel.ChannelPlatformRepositoryImpl;
 import com.nextdv.infrastructure.channel.ChannelRepositoryImpl;
 import com.nextdv.infrastructure.channel.ChannelTypeEntity;
+import com.nextdv.infrastructure.deliverylog.DeliveryLogRepositoryImpl;
+import com.nextdv.infrastructure.deliverylog.DeliveryLogJpaRepository;
+import com.nextdv.infrastructure.deliverylog.DeliveryStatusEntity;
 import com.nextdv.infrastructure.notification.FakeDiscordSender;
 import com.nextdv.infrastructure.notification.FakeEmailSender;
 import com.nextdv.infrastructure.notification.FakeSlackSender;
@@ -32,7 +38,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Import(ChannelRepositoryImpl.class)
+@Import({ChannelRepositoryImpl.class, ChannelPlatformRepositoryImpl.class,
+    DeliveryLogRepositoryImpl.class})
 @Testcontainers
 class HealthCheckPollNotificationTest {
 
@@ -49,6 +56,15 @@ class HealthCheckPollNotificationTest {
   @Autowired
   private ChannelRepository channelRepository;
 
+  @Autowired
+  private DeliveryLogJpaRepository deliveryLogJpaRepository;
+
+  @Autowired
+  private ChannelPlatformRepository channelPlatformRepository;
+
+  @Autowired
+  private DeliveryLogRepository deliveryLogRepository;
+
   private FakeEmailSender fakeEmailSender;
   private FakeSlackSender fakeSlackSender;
   private FakeDiscordSender fakeDiscordSender;
@@ -60,7 +76,8 @@ class HealthCheckPollNotificationTest {
     fakeSlackSender = new FakeSlackSender();
     fakeDiscordSender = new FakeDiscordSender();
     service = new HealthCheckPollService(
-        null, null, null, channelRepository, fakeEmailSender, fakeSlackSender, fakeDiscordSender
+        null, null, null, channelRepository, fakeEmailSender, fakeSlackSender,
+        fakeDiscordSender, channelPlatformRepository, deliveryLogRepository
     );
   }
 
@@ -266,5 +283,80 @@ class HealthCheckPollNotificationTest {
     assertThat(fakeDiscordSender.getSentUrls()).containsExactly(
         "https://discord.com/api/webhooks/test"
     );
+  }
+
+  @Test
+  void 이메일_발송_성공_시_delivery_log가_SUCCESS로_저장된다() {
+    UUID platformId = UUID.randomUUID();
+    UUID channelId = UUID.randomUUID();
+    UUID channelPlatformId = UUID.randomUUID();
+    Instant now = Instant.now();
+
+    channelJpaRepository.save(
+        new ChannelEntity(
+            channelId, UUID.randomUUID(), ChannelTypeEntity.EMAIL,
+            "이메일", Map.of(
+                "address",
+                "user@example.com"
+            ), now, now, null
+        )
+    );
+    channelPlatformJpaRepository.save(
+        new ChannelPlatformEntity(channelPlatformId, channelId, platformId, now)
+    );
+
+    Platform platform = new Platform(
+        platformId, "GitHub", ServiceCategory.DEVTOOL,
+        "https://github.com", 5000, 2000, null, true
+    );
+
+    service.notifyStatusChange(
+        platform,
+        ServiceStatus.OPERATIONAL,
+        ServiceStatus.MAJOR_OUTAGE
+    );
+
+    assertThat(deliveryLogJpaRepository.findAll()).hasSize(1);
+    assertThat(deliveryLogJpaRepository.findAll().get(0).getChannelPlatformId())
+        .isEqualTo(channelPlatformId);
+    assertThat(deliveryLogJpaRepository.findAll().get(0).getStatus())
+        .isEqualTo(DeliveryStatusEntity.SUCCESS);
+  }
+
+  @Test
+  void 이메일_발송_실패_시_delivery_log가_FAILED로_저장된다() {
+    UUID platformId = UUID.randomUUID();
+    UUID channelId = UUID.randomUUID();
+    UUID channelPlatformId = UUID.randomUUID();
+    Instant now = Instant.now();
+
+    channelJpaRepository.save(
+        new ChannelEntity(
+            channelId, UUID.randomUUID(), ChannelTypeEntity.EMAIL,
+            "이메일", Map.of(
+                "address",
+                "bad-address"
+            ), now, now, null
+        )
+    );
+    channelPlatformJpaRepository.save(
+        new ChannelPlatformEntity(channelPlatformId, channelId, platformId, now)
+    );
+
+    Platform platform = new Platform(
+        platformId, "GitHub", ServiceCategory.DEVTOOL,
+        "https://github.com", 5000, 2000, null, true
+    );
+
+    fakeEmailSender.setShouldFail(true);
+    service.notifyStatusChange(
+        platform,
+        ServiceStatus.OPERATIONAL,
+        ServiceStatus.MAJOR_OUTAGE
+    );
+
+    assertThat(deliveryLogJpaRepository.findAll()).hasSize(1);
+    assertThat(deliveryLogJpaRepository.findAll().get(0).getStatus())
+        .isEqualTo(DeliveryStatusEntity.FAILED);
   }
 }
