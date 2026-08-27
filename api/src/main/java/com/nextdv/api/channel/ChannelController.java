@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * 알림 채널 관련 REST API 엔드포인트를 제공하는 컨트롤러
  */
+@Slf4j
 @RestController
 @RequestMapping("/channels")
 public class ChannelController {
@@ -46,11 +48,21 @@ public class ChannelController {
   @ApiResponse(responseCode = "500", description = "서버 내부 오류")
   public ResponseEntity<CommonResponse<ChannelResponse>> create(
       @Valid @RequestBody ChannelRequest request) {
+    log.info(
+        "채널 생성 요청 — userId: {}, type: {}, name: {}",
+        request.getUserId(),
+        request.getType(),
+        request.getName()
+    );
     Channel channel = channelService.create(
         request.getUserId(),
         request.getType(),
         request.getName(),
         request.getConfig()
+    );
+    log.info(
+        "채널 생성 완료 — id: {}",
+        channel.getId()
     );
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(CommonResponse.ok(ChannelMapper.toResponse(channel)));
@@ -67,7 +79,16 @@ public class ChannelController {
   @ApiResponse(responseCode = "400", description = "userId 파라미터 누락 또는 UUID 형식이 아님")
   @ApiResponse(responseCode = "500", description = "서버 내부 오류")
   public ResponseEntity<CommonResponse<List<ChannelResponse>>> list(@RequestParam UUID userId) {
+    log.info(
+        "채널 목록 조회 요청 — userId: {}",
+        userId
+    );
     List<Channel> channels = channelService.findAllByUserId(userId);
+    log.info(
+        "채널 목록 조회 완료 — userId: {}, 건수: {}",
+        userId,
+        channels.size()
+    );
     return ResponseEntity.ok(CommonResponse.ok(ChannelMapper.toResponseList(channels)));
   }
 
@@ -83,7 +104,15 @@ public class ChannelController {
   @ApiResponse(responseCode = "404", description = "해당 ID에 해당하는 채널이 존재하지 않음")
   @ApiResponse(responseCode = "500", description = "서버 내부 오류")
   public ResponseEntity<CommonResponse<Void>> delete(@PathVariable UUID id) {
+    log.info(
+        "채널 삭제 요청 — id: {}",
+        id
+    );
     channelService.delete(id);
+    log.info(
+        "채널 삭제 완료 — id: {}",
+        id
+    );
     return ResponseEntity.ok(CommonResponse.ok(null));
   }
 }
