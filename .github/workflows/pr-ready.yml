@@ -1,0 +1,36 @@
+name: PR Ready for Review
+
+on:
+  pull_request:
+    types: [ready_for_review]
+
+jobs:
+  notify-and-assign:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Assign reviewer
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              await github.rest.pulls.requestReviewers({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                reviewers: ['jinlee1703']
+              })
+            } catch (e) {
+              core.setFailed(e.message)
+            }
+
+      - name: Send Discord notification
+        if: always()
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+          URL: ${{ github.event.pull_request.html_url }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          BODY=$(printf '{"content": "**[PR 리뷰 요청]** %s\\n%s"}' "$TITLE" "$URL")
+          curl --fail -H "Content-Type: application/json" -d "$BODY" "$DISCORD_WEBHOOK_URL"
