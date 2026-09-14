@@ -1,0 +1,144 @@
+name: Kanban 자동화
+
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [ready_for_review, closed]
+
+jobs:
+  kanban:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 이슈 생성 → Backlogs
+        if: github.event_name == 'issues'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+          script: |
+            const projectId = 'PVT_kwDODBIwsc4Bevg9';
+            const statusFieldId = 'PVTSSF_lADODBIwsc4Bevg9zhZHdvs';
+
+            const { addProjectV2ItemById } = await github.graphql(`
+              mutation($projectId: ID!, $contentId: ID!) {
+                addProjectV2ItemById(input: { projectId: $projectId, contentId: $contentId }) {
+                  item { id }
+                }
+              }
+            `, { projectId, contentId: context.payload.issue.node_id });
+
+            await github.graphql(`
+              mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: $projectId
+                  itemId: $itemId
+                  fieldId: $fieldId
+                  value: { singleSelectOptionId: $optionId }
+                }) { projectV2Item { id } }
+              }
+            `, {
+              projectId,
+              itemId: addProjectV2ItemById.item.id,
+              fieldId: statusFieldId,
+              optionId: '97348409'
+            });
+
+      - name: PR Ready for Review → In Reviews
+        if: github.event_name == 'pull_request' && github.event.action == 'ready_for_review'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+          script: |
+            const projectId = 'PVT_kwDODBIwsc4Bevg9';
+            const statusFieldId = 'PVTSSF_lADODBIwsc4Bevg9zhZHdvs';
+            const optionId = '2a01bcfd';
+
+            const { repository } = await github.graphql(`
+              query($owner: String!, $repo: String!, $prNumber: Int!) {
+                repository(owner: $owner, name: $repo) {
+                  pullRequest(number: $prNumber) {
+                    closingIssuesReferences(first: 10) {
+                      nodes { id }
+                    }
+                  }
+                }
+              }
+            `, { owner: context.repo.owner, repo: context.repo.repo, prNumber: context.payload.pull_request.number });
+
+            for (const issue of repository.pullRequest.closingIssuesReferences.nodes) {
+              const { node } = await github.graphql(`
+                query($id: ID!) {
+                  node(id: $id) {
+                    ... on Issue {
+                      projectItems(first: 10) {
+                        nodes { id project { id } }
+                      }
+                    }
+                  }
+                }
+              `, { id: issue.id });
+
+              const item = node.projectItems.nodes.find(n => n.project.id === projectId);
+              if (!item) continue;
+
+              await github.graphql(`
+                mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+                  updateProjectV2ItemFieldValue(input: {
+                    projectId: $projectId
+                    itemId: $itemId
+                    fieldId: $fieldId
+                    value: { singleSelectOptionId: $optionId }
+                  }) { projectV2Item { id } }
+                }
+              `, { projectId, itemId: item.id, fieldId: statusFieldId, optionId });
+            }
+
+      - name: PR 머지 → Done
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+          script: |
+            const projectId = 'PVT_kwDODBIwsc4Bevg9';
+            const statusFieldId = 'PVTSSF_lADODBIwsc4Bevg9zhZHdvs';
+            const optionId = '98236657';
+
+            const { repository } = await github.graphql(`
+              query($owner: String!, $repo: String!, $prNumber: Int!) {
+                repository(owner: $owner, name: $repo) {
+                  pullRequest(number: $prNumber) {
+                    closingIssuesReferences(first: 10) {
+                      nodes { id }
+                    }
+                  }
+                }
+              }
+            `, { owner: context.repo.owner, repo: context.repo.repo, prNumber: context.payload.pull_request.number });
+
+            for (const issue of repository.pullRequest.closingIssuesReferences.nodes) {
+              const { node } = await github.graphql(`
+                query($id: ID!) {
+                  node(id: $id) {
+                    ... on Issue {
+                      projectItems(first: 10) {
+                        nodes { id project { id } }
+                      }
+                    }
+                  }
+                }
+              `, { id: issue.id });
+
+              const item = node.projectItems.nodes.find(n => n.project.id === projectId);
+              if (!item) continue;
+
+              await github.graphql(`
+                mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+                  updateProjectV2ItemFieldValue(input: {
+                    projectId: $projectId
+                    itemId: $itemId
+                    fieldId: $fieldId
+                    value: { singleSelectOptionId: $optionId }
+                  }) { projectV2Item { id } }
+                }
+              `, { projectId, itemId: item.id, fieldId: statusFieldId, optionId });
+            }
