@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.nextdv.domain.channel.ChannelPlatform;
 import com.nextdv.domain.channel.ChannelPlatformService;
 import com.nextdv.domain.platform.ServiceCategory;
+import com.nextdv.infrastructure.account.AccountEntity;
+import com.nextdv.infrastructure.account.AccountJpaRepository;
 import com.nextdv.infrastructure.platform.PlatformEntity;
 import com.nextdv.infrastructure.platform.PlatformJpaRepository;
 import com.nextdv.infrastructure.platform.PlatformRepositoryImpl;
@@ -46,17 +48,22 @@ class ChannelPlatformServiceTest {
   private ChannelJpaRepository channelJpaRepository;
 
   @Autowired
+  private AccountJpaRepository accountJpaRepository;
+
+  @Autowired
   private PlatformJpaRepository platformJpaRepository;
 
   @Autowired
   private ChannelPlatformService channelPlatformService;
 
   private UUID savedChannelId() {
+    UUID userId = UUID.randomUUID();
+    accountJpaRepository.save(new AccountEntity(userId, userId + "@test.com"));
     Instant now = Instant.now();
     ChannelEntity entity = channelJpaRepository.save(
         new ChannelEntity(
             UUID.randomUUID(),
-            UUID.randomUUID(),
+            userId,
             ChannelTypeEntity.SLACK,
             "슬랙",
             Map.of(
