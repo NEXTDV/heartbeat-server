@@ -1,9 +1,13 @@
 package com.nextdv.infrastructure.healthcheck;
 
+import com.nextdv.domain.channel.ChannelPlatformRepository;
 import com.nextdv.domain.channel.ChannelRepository;
 import com.nextdv.domain.channel.DiscordSender;
 import com.nextdv.domain.channel.EmailSender;
 import com.nextdv.domain.channel.SlackSender;
+import com.nextdv.domain.deliverylog.DeliveryLog;
+import com.nextdv.domain.deliverylog.DeliveryLogRepository;
+import com.nextdv.domain.deliverylog.DeliveryStatus;
 import com.nextdv.domain.healthcheck.HealthCheckLog;
 import com.nextdv.domain.healthcheck.HealthCheckLogRepository;
 import com.nextdv.domain.healthcheck.ServiceStatus;
@@ -37,6 +41,8 @@ public class HealthCheckPollService {
   private final EmailSender emailSender;
   private final SlackSender slackSender;
   private final DiscordSender discordSender;
+  private final ChannelPlatformRepository channelPlatformRepository;
+  private final DeliveryLogRepository deliveryLogRepository;
 
   /**
    * 메소드이름: pollAll
@@ -105,12 +111,22 @@ public class HealthCheckPollService {
             platform,
             current
         );
+        saveDeliveryLog(
+            channel.getId(),
+            platform.getId(),
+            DeliveryStatus.SUCCESS
+        );
       } catch (Exception e) {
         log.error(
             "이메일 발송 실패 — 채널: {}, 주소: {}",
             channel.getId(),
             address,
             e
+        );
+        saveDeliveryLog(
+            channel.getId(),
+            platform.getId(),
+            DeliveryStatus.FAILED
         );
       }
     });
@@ -122,12 +138,22 @@ public class HealthCheckPollService {
             platform,
             current
         );
+        saveDeliveryLog(
+            channel.getId(),
+            platform.getId(),
+            DeliveryStatus.SUCCESS
+        );
       } catch (Exception e) {
         log.error(
             "Slack 발송 실패 — 채널: {}, URL: {}",
             channel.getId(),
             url,
             e
+        );
+        saveDeliveryLog(
+            channel.getId(),
+            platform.getId(),
+            DeliveryStatus.FAILED
         );
       }
     });
@@ -139,6 +165,11 @@ public class HealthCheckPollService {
             platform,
             current
         );
+        saveDeliveryLog(
+            channel.getId(),
+            platform.getId(),
+            DeliveryStatus.SUCCESS
+        );
       } catch (Exception e) {
         log.error(
             "Discord 발송 실패 — 채널: {}, URL: {}",
@@ -146,8 +177,26 @@ public class HealthCheckPollService {
             url,
             e
         );
+        saveDeliveryLog(
+            channel.getId(),
+            platform.getId(),
+            DeliveryStatus.FAILED
+        );
       }
     });
+  }
+
+  private void saveDeliveryLog(UUID channelId, UUID platformId, DeliveryStatus status) {
+    channelPlatformRepository
+        .findByChannelIdAndPlatformId(
+            channelId,
+            platformId
+        )
+        .ifPresent(
+            cp -> deliveryLogRepository.save(
+                new DeliveryLog(UUID.randomUUID(), cp.getId(), status, Instant.now())
+            )
+        );
   }
 
   ServiceStatus determineStatus(int httpStatus, int responseMs, int degradedThresholdMs) {
