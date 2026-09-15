@@ -5,6 +5,7 @@ import com.nextdv.domain.channel.ChannelPlatform;
 import com.nextdv.domain.channel.ChannelPlatformService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * 채널-플랫폼 구독 관련 REST API 엔드포인트를 제공하는 컨트롤러
  */
+@Slf4j
 @RestController
 @RequestMapping("/channel-platforms")
 public class ChannelPlatformController {
@@ -42,9 +44,18 @@ public class ChannelPlatformController {
   @ApiResponse(responseCode = "500", description = "서버 내부 오류")
   public ResponseEntity<CommonResponse<ChannelPlatformResponse>> subscribe(
       @Valid @RequestBody ChannelPlatformRequest request) {
+    log.info(
+        "구독 요청 — channelId: {}, platformId: {}",
+        request.getChannelId(),
+        request.getPlatformId()
+    );
     ChannelPlatform channelPlatform = channelPlatformService.subscribe(
         request.getChannelId(),
         request.getPlatformId()
+    );
+    log.info(
+        "구독 완료 — id: {}",
+        channelPlatform.getId()
     );
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(CommonResponse.ok(ChannelPlatformResponse.from(channelPlatform)));

@@ -43,7 +43,9 @@ public class HealthCheckPollService {
    * 활성화된 모든 플랫폼에 대해 헬스체크를 수행한다
    */
   public void pollAll() {
+    log.info("전체 플랫폼 헬스체크 시작");
     platformService.findAll().forEach(this::poll);
+    log.info("전체 플랫폼 헬스체크 완료");
   }
 
   private void poll(Platform platform) {
@@ -78,7 +80,21 @@ public class HealthCheckPollService {
       responseMs = (int) (System.currentTimeMillis() - startMs);
       httpStatusCode = null;
       status = ServiceStatus.MAJOR_OUTAGE;
+      log.warn(
+          "헬스체크 연결 실패 — platformId: {}, url: {}",
+          platform.getId(),
+          platform.getHealthCheckUrl(),
+          e
+      );
     }
+
+    log.info(
+        "헬스체크 결과 — platformId: {}, status: {}, httpStatus: {}, 응답시간: {}ms",
+        platform.getId(),
+        status,
+        httpStatusCode,
+        responseMs
+    );
 
     notifyStatusChange(
         platform,
@@ -97,6 +113,12 @@ public class HealthCheckPollService {
     if (previous == null || previous == current) {
       return;
     }
+    log.warn(
+        "플랫폼 상태 변경 — platformId: {}, {} → {}",
+        platform.getId(),
+        previous,
+        current
+    );
     channelRepository.findEmailChannelsByPlatformId(platform.getId()).forEach(channel -> {
       String address = (String) channel.getConfig().get("address");
       try {

@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
  *
  * 채널-플랫폼 구독 비즈니스 로직을 담당하는 서비스
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChannelPlatformService {
@@ -31,18 +33,42 @@ public class ChannelPlatformService {
   public ChannelPlatform subscribe(UUID channelId, UUID platformId) {
     channelRepository
         .findById(channelId)
-        .orElseThrow(() -> new NoSuchElementException("채널을 찾을 수 없습니다."));
+        .orElseThrow(() -> {
+          log.warn(
+              "구독 실패 — 존재하지 않는 channelId: {}",
+              channelId
+          );
+          return new NoSuchElementException("채널을 찾을 수 없습니다.");
+        });
     platformRepository
         .findById(platformId)
-        .orElseThrow(() -> new NoSuchElementException("플랫폼을 찾을 수 없습니다."));
+        .orElseThrow(() -> {
+          log.warn(
+              "구독 실패 — 존재하지 않는 platformId: {}",
+              platformId
+          );
+          return new NoSuchElementException("플랫폼을 찾을 수 없습니다.");
+        });
     if (channelPlatformRepository.existsByChannelIdAndPlatformId(
         channelId,
         platformId
     )) {
+      log.warn(
+          "구독 실패 — 이미 구독 중 channelId: {}, platformId: {}",
+          channelId,
+          platformId
+      );
       throw new IllegalStateException("이미 구독 중입니다.");
     }
-    return channelPlatformRepository.save(
+    ChannelPlatform saved = channelPlatformRepository.save(
         new ChannelPlatform(UUID.randomUUID(), channelId, platformId, Instant.now())
     );
+    log.info(
+        "구독 완료 — id: {}, channelId: {}, platformId: {}",
+        saved.getId(),
+        channelId,
+        platformId
+    );
+    return saved;
   }
 }

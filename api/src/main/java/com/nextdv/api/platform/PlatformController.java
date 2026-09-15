@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * 플랫폼 조회 REST API 엔드포인트를 제공하는 컨트롤러
  */
+@Slf4j
 @RestController
 @RequestMapping("/platforms")
 @RequiredArgsConstructor
@@ -36,7 +38,12 @@ public class PlatformController {
   @GetMapping
   @ApiResponse(responseCode = "500", description = "서버 내부 오류")
   public ResponseEntity<CommonResponse<List<PlatformResponse>>> list() {
+    log.info("플랫폼 목록 조회 요청");
     List<Platform> platforms = platformService.findAll();
+    log.info(
+        "플랫폼 목록 조회 완료 — 건수: {}",
+        platforms.size()
+    );
     return ResponseEntity.ok(CommonResponse.ok(PlatformMapper.toResponseList(platforms)));
   }
 
@@ -52,6 +59,10 @@ public class PlatformController {
   @ApiResponse(responseCode = "404", description = "해당 ID에 해당하는 플랫폼이 존재하지 않음")
   @ApiResponse(responseCode = "500", description = "서버 내부 오류")
   public ResponseEntity<CommonResponse<PlatformResponse>> findById(@PathVariable UUID id) {
+    log.info(
+        "플랫폼 조회 요청 — id: {}",
+        id
+    );
     Platform platform = platformService
         .findById(id)
         .orElseThrow(() -> new NoSuchElementException("플랫폼을 찾을 수 없습니다."));
