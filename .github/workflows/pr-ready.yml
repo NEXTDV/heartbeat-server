@@ -31,6 +31,8 @@ jobs:
           TITLE: ${{ github.event.pull_request.title }}
           URL: ${{ github.event.pull_request.html_url }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_REVIEW_WEBHOOK_URL: ${{ secrets.DISCORD_REVIEW_WEBHOOK_URL }}
         run: |
           BODY=$(printf '{"content": "**[PR 리뷰 요청]** %s\\n%s"}' "$TITLE" "$URL")
           curl --fail -H "Content-Type: application/json" -d "$BODY" "$DISCORD_WEBHOOK_URL"
+          curl --fail -H "Content-Type: application/json" -d "$BODY" "$DISCORD_REVIEW_WEBHOOK_URL"
