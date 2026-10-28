@@ -15,6 +15,8 @@ import com.nextdv.infrastructure.notification.FakeSlackSender;
 import com.nextdv.infrastructure.platform.PlatformEntity;
 import com.nextdv.infrastructure.platform.PlatformJpaRepository;
 import com.nextdv.infrastructure.platform.PlatformRepositoryImpl;
+import com.sun.net.httpserver.HttpServer;
+import java.net.InetSocketAddress;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -90,5 +92,43 @@ class HealthCheckPollIsolationTest {
             log -> assertThat(log.getStatus()).isEqualTo(ServiceStatus.MAJOR_OUTAGE)
         );
     assertThat(healthCheckLogRepository.findLatestByPlatformId(brokenId)).isEmpty();
+  }
+
+  @Test
+  void 정상_응답_플랫폼은_OPERATIONAL로_기록된다() throws Exception {
+    HttpServer server = HttpServer.create(
+        new InetSocketAddress("127.0.0.1", 0),
+        0
+    );
+    server.createContext(
+        "/health",
+        exchange -> {
+          exchange.sendResponseHeaders(
+              200,
+              -1
+          );
+          exchange.close();
+        }
+    );
+    server.start();
+    try {
+      int port = server.getAddress().getPort();
+      UUID healthyId = UUID.randomUUID();
+      platformJpaRepository.save(
+          new PlatformEntity(
+              healthyId, "Healthy", ServiceCategory.OTHER,
+              "http://127.0.0.1:" + port + "/health", 3000, 1000, null, true
+          )
+      );
+
+      service.pollAll();
+
+      assertThat(healthCheckLogRepository.findLatestByPlatformId(healthyId))
+          .hasValueSatisfying(
+              log -> assertThat(log.getStatus()).isEqualTo(ServiceStatus.OPERATIONAL)
+          );
+    } finally {
+      server.stop(0);
+    }
   }
 }
