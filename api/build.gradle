@@ -2,12 +2,19 @@ plugins {
     id 'org.springframework.boot'
 }
 
+configurations {
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+}
+
 dependencies {
     implementation project(':domain')
     runtimeOnly    project(':infrastructure')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
  *
  * 알림 채널 생성, 조회, 삭제 비즈니스 로직을 담당하는 서비스
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChannelService {
@@ -35,7 +37,14 @@ public class ChannelService {
     );
     Instant now = Instant.now();
     Channel channel = new Channel(UUID.randomUUID(), userId, type, name, config, now, now, null);
-    return channelRepository.save(channel);
+    Channel saved = channelRepository.save(channel);
+    log.info(
+        "채널 생성 — id: {}, userId: {}, type: {}",
+        saved.getId(),
+        userId,
+        type
+    );
+    return saved;
   }
 
   private void validateConfig(ChannelType type, Map<String, Object> config) {
@@ -71,7 +80,13 @@ public class ChannelService {
    * @return 해당 사용자의 채널 목록
    */
   public List<Channel> findAllByUserId(UUID userId) {
-    return channelRepository.findAllByUserId(userId);
+    List<Channel> channels = channelRepository.findAllByUserId(userId);
+    log.info(
+        "채널 조회 — userId: {}, 건수: {}",
+        userId,
+        channels.size()
+    );
+    return channels;
   }
 
   /**
@@ -83,7 +98,13 @@ public class ChannelService {
   public void delete(UUID id) {
     Channel channel = channelRepository
         .findById(id)
-        .orElseThrow(() -> new NoSuchElementException("채널을 찾을 수 없습니다."));
+        .orElseThrow(() -> {
+          log.warn(
+              "채널 삭제 실패 — 존재하지 않는 id: {}",
+              id
+          );
+          return new NoSuchElementException("채널을 찾을 수 없습니다.");
+        });
     Channel deleted = new Channel(
         channel.getId(),
         channel.getUserId(),
@@ -95,5 +116,9 @@ public class ChannelService {
         Instant.now()
     );
     channelRepository.save(deleted);
+    log.info(
+        "채널 삭제 — id: {}",
+        id
+    );
   }
 }

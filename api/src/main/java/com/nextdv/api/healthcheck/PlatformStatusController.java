@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * 플랫폼 헬스체크 상태 조회 REST API 엔드포인트를 제공하는 컨트롤러
  */
+@Slf4j
 @RestController
 @RequestMapping("/platforms")
 @RequiredArgsConstructor
@@ -40,12 +42,18 @@ public class PlatformStatusController {
   @ApiResponse(responseCode = "404", description = "해당 ID에 해당하는 플랫폼이 존재하지 않음")
   @ApiResponse(responseCode = "500", description = "서버 내부 오류")
   public ResponseEntity<CommonResponse<HealthCheckLogResponse>> getStatus(@PathVariable UUID id) {
+    log.info(
+        "플랫폼 상태 조회 요청 — platformId: {}",
+        id
+    );
     platformService
         .findById(id)
         .orElseThrow(() -> new NoSuchElementException("플랫폼을 찾을 수 없습니다."));
     return healthCheckLogService
         .findLatestByPlatformId(id)
-        .map(log -> ResponseEntity.ok(CommonResponse.ok(HealthCheckLogMapper.toResponse(log))))
+        .map(
+            latest -> ResponseEntity.ok(CommonResponse.ok(HealthCheckLogMapper.toResponse(latest)))
+        )
         .orElse(ResponseEntity.ok(CommonResponse.ok(null)));
   }
 
@@ -62,6 +70,10 @@ public class PlatformStatusController {
   @ApiResponse(responseCode = "500", description = "서버 내부 오류")
   public ResponseEntity<CommonResponse<List<HealthCheckLogResponse>>> getLogs(
       @PathVariable UUID id) {
+    log.info(
+        "플랫폼 로그 조회 요청 — platformId: {}",
+        id
+    );
     platformService
         .findById(id)
         .orElseThrow(() -> new NoSuchElementException("플랫폼을 찾을 수 없습니다."));
