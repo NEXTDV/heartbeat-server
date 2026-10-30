@@ -1,0 +1,49 @@
+name: 배포 DB 스키마 내보내기
+
+# 배포 DB의 표 구조(스키마)만 읽어 1일 보관 결과물로 올린다.
+# 데이터·DB 계정·권한 정보는 포함하지 않으며, 배포 DB에 쓰기 작업을 하지 않는다.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  schema-dump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH 키 준비
+        env:
+          SSH_KEY: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+      - name: 표 구조만 읽기
+        env:
+          SSH_HOST: ${{ secrets.LIGHTSAIL_HOST }}
+          SSH_USER: ${{ secrets.LIGHTSAIL_USER }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new "$SSH_USER@$SSH_HOST" 'bash -s' > schema.sql <<'REMOTE'
+          set -euo pipefail
+          POD="schema-dump-$(date +%s)"
+          # DB 접속 정보는 클러스터 안 시크릿에서 바로 주입해 서버 밖으로 나가지 않게 한다
+          OVERRIDES=$(cat <<JSON
+          {"spec":{"hostNetwork":true,"dnsPolicy":"ClusterFirstWithHostNet","containers":[{"name":"$POD","image":"postgres:17-alpine","stdin":true,
+          "envFrom":[{"secretRef":{"name":"heartbeat-secret"}}],
+          "command":["sh","-c","U=\"\${DB_URL#jdbc:postgresql://}\"; U=\"\${U%%\\\\?*}\"; HP=\"\${U%%/*}\"; DB=\"\${U#*/}\"; H=\"\${HP%%:*}\"; P=\"\${HP#*:}\"; [ \"\$P\" = \"\$HP\" ] && P=5432; PGPASSWORD=\"\$DB_PASSWORD\" exec pg_dump --schema-only --no-owner --no-privileges -h \"\$H\" -p \"\$P\" -U \"\$DB_USERNAME\" \"\$DB\""]}]}}
+          JSON
+          )
+          sudo kubectl run "$POD" -n heartbeat --rm -i --quiet --restart=Never \
+            --image=postgres:17-alpine --overrides="$OVERRIDES"
+          REMOTE
+          test -s schema.sql
+          echo "스키마 $(wc -l < schema.sql)줄을 가져왔어요"
+
+      - name: 결과 올리기 (1일 보관)
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployed-schema
+          path: schema.sql
+          retention-days: 1
