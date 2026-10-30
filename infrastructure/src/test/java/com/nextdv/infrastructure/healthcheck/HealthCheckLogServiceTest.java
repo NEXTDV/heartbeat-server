@@ -6,6 +6,9 @@ import com.nextdv.domain.common.UuidV7;
 import com.nextdv.domain.healthcheck.HealthCheckLog;
 import com.nextdv.domain.healthcheck.HealthCheckLogService;
 import com.nextdv.domain.healthcheck.ServiceStatus;
+import com.nextdv.domain.platform.ServiceCategory;
+import com.nextdv.infrastructure.platform.PlatformEntity;
+import com.nextdv.infrastructure.platform.PlatformJpaRepository;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +38,20 @@ class HealthCheckLogServiceTest {
   private HealthCheckLogJpaRepository jpaRepository;
 
   @Autowired
+  private PlatformJpaRepository platformJpaRepository;
+
+  @Autowired
   private HealthCheckLogService healthCheckLogService;
+
+  private UUID savedPlatformId() {
+    UUID id = UUID.randomUUID();
+    platformJpaRepository.save(
+        new PlatformEntity(
+            id, "테스트", ServiceCategory.OTHER, "https://example.com/health", 3000, 1000, null, true
+        )
+    );
+    return id;
+  }
 
   @Test
   void 로그가_없으면_빈_Optional을_반환한다() {
@@ -48,7 +64,7 @@ class HealthCheckLogServiceTest {
 
   @Test
   void 최신_로그를_반환한다() {
-    UUID platformId = UUID.randomUUID();
+    UUID platformId = savedPlatformId();
     Instant older = Instant.now().minusSeconds(60);
     Instant newer = Instant.now();
     jpaRepository.save(
@@ -78,7 +94,7 @@ class HealthCheckLogServiceTest {
 
   @Test
   void platformId로_로그_목록을_조회한다() {
-    UUID platformId = UUID.randomUUID();
+    UUID platformId = savedPlatformId();
     Instant now = Instant.now();
     jpaRepository.save(
         new HealthCheckLogEntity(
@@ -99,8 +115,8 @@ class HealthCheckLogServiceTest {
 
   @Test
   void 다른_플랫폼_로그는_조회되지_않는다() {
-    UUID platformId = UUID.randomUUID();
-    UUID otherPlatformId = UUID.randomUUID();
+    UUID platformId = savedPlatformId();
+    UUID otherPlatformId = savedPlatformId();
     Instant now = Instant.now();
     jpaRepository.save(
         new HealthCheckLogEntity(
