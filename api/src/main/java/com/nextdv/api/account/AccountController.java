@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * 계정 관련 REST API 엔드포인트를 제공하는 컨트롤러
  */
+@Slf4j
 @RestController
 @RequestMapping("/accounts")
 @RequiredArgsConstructor
@@ -37,8 +39,13 @@ public class AccountController {
   @GetMapping
   @ApiResponse(responseCode = "500", description = "서버 내부 오류")
   public ResponseEntity<CommonResponse<List<AccountResponse>>> list() {
+    log.info("계정 목록 조회 요청");
     List<Account> accounts = accountService.findAll();
     List<AccountResponse> data = AccountMapper.toResponseList(accounts);
+    log.info(
+        "계정 목록 조회 완료 — 건수: {}",
+        data.size()
+    );
     return ResponseEntity.ok(CommonResponse.ok(data));
   }
 
@@ -55,7 +62,15 @@ public class AccountController {
   @ApiResponse(responseCode = "500", description = "서버 내부 오류")
   public ResponseEntity<CommonResponse<AccountResponse>> create(
       @Valid @RequestBody AccountRequest request) {
+    log.info(
+        "계정 생성 요청 — 이메일: {}",
+        request.getEmail()
+    );
     Account account = accountService.create(request.getEmail());
+    log.info(
+        "계정 생성 완료 — id: {}",
+        account.getId()
+    );
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(CommonResponse.ok(AccountMapper.toResponse(account)));
   }

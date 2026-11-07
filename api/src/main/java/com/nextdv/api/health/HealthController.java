@@ -5,6 +5,7 @@ import com.nextdv.domain.health.HealthResult;
 import com.nextdv.domain.health.HealthService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * 서버 헬스체크 엔드포인트를 제공하는 컨트롤러
  */
+@Slf4j
 @RestController
 @RequestMapping("/health")
 @RequiredArgsConstructor
@@ -32,6 +34,7 @@ public class HealthController {
   @GetMapping
   @ApiResponse(responseCode = "500", description = "서버 내부 오류")
   public ResponseEntity<CommonResponse<HealthResponse>> health() {
+    log.debug("헬스 체크 요청");
     HealthResult result = healthService.check();
     return ResponseEntity.ok(CommonResponse.ok(HealthMapper.toResponse(result)));
   }

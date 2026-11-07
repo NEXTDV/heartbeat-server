@@ -3,6 +3,7 @@ package com.nextdv.domain.account;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
  *
  * 계정 생성 및 조회 비즈니스 로직을 담당하는 서비스
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountService {
@@ -24,7 +26,12 @@ public class AccountService {
    * @return 전체 계정 목록
    */
   public List<Account> findAll() {
-    return accountRepository.findAll();
+    List<Account> accounts = accountRepository.findAll();
+    log.info(
+        "계정 전체 조회 — 건수: {}",
+        accounts.size()
+    );
+    return accounts;
   }
 
   /**
@@ -36,11 +43,22 @@ public class AccountService {
    */
   public Account create(String email) {
     if (email == null || email.isBlank()) {
+      log.warn("계정 생성 실패 — 이메일 누락");
       throw new IllegalArgumentException("이메일은 필수입니다.");
     }
     if (accountRepository.existsByEmail(email)) {
+      log.warn(
+          "계정 생성 실패 — 중복 이메일: {}",
+          email
+      );
       throw new IllegalStateException("이미 사용 중인 이메일입니다.");
     }
-    return accountRepository.save(new Account(UUID.randomUUID(), email));
+    Account account = accountRepository.save(new Account(UUID.randomUUID(), email));
+    log.info(
+        "계정 생성 — id: {}, 이메일: {}",
+        account.getId(),
+        email
+    );
+    return account;
   }
 }
