@@ -3,6 +3,7 @@ package com.nextdv.infrastructure.healthcheck;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.nextdv.domain.common.UuidV7;
+import com.nextdv.infrastructure.PostgresContainerSupport;
 import com.nextdv.domain.healthcheck.HealthCheckLog;
 import com.nextdv.domain.healthcheck.HealthCheckLogService;
 import com.nextdv.domain.healthcheck.ServiceStatus;
@@ -15,21 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Import;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Import({HealthCheckLogRepositoryImpl.class, HealthCheckLogService.class})
-@Testcontainers
-class HealthCheckLogServiceTest {
-
-  @Container
-  @ServiceConnection
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
+class HealthCheckLogServiceTest extends PostgresContainerSupport {
 
   @Autowired
   private HealthCheckLogJpaRepository jpaRepository;
