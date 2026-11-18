@@ -16,4 +16,4 @@ COPY --from=build /app/api/build/libs/ ./libs/
 RUN find ./libs -name "*.jar" ! -name "*-plain.jar" -exec cp {} app.jar \; && rm -rf ./libs
 RUN useradd -r -u 10001 appuser && chown appuser:appuser app.jar
 USER 10001
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:-UseBASE64Intrinsics", "-jar", "app.jar"]
