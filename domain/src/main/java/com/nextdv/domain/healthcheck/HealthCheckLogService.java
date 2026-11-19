@@ -1,7 +1,9 @@
 package com.nextdv.domain.healthcheck;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,5 +40,26 @@ public class HealthCheckLogService {
    */
   public List<HealthCheckLog> findAllByPlatformId(UUID platformId) {
     return healthCheckLogRepository.findAllByPlatformId(platformId);
+  }
+
+  /**
+   * 메소드이름: calculateUptimePercent
+   * since 이후의 로그 중 OPERATIONAL 비율을 백분율로 계산한다
+   *
+   * @param platformId 조회할 플랫폼 ID
+   * @param since 집계 시작 시점 (이 시점 이후의 로그만 포함)
+   * @return 가동률 백분율 (해당 구간에 로그가 없으면 empty)
+   */
+  public OptionalDouble calculateUptimePercent(UUID platformId, Instant since) {
+    List<HealthCheckLog> logs = healthCheckLogRepository.findAllByPlatformId(platformId).stream()
+        .filter(log -> !log.getCheckedAt().isBefore(since))
+        .toList();
+    if (logs.isEmpty()) {
+      return OptionalDouble.empty();
+    }
+    long operational = logs.stream()
+        .filter(log -> log.getStatus() == ServiceStatus.OPERATIONAL)
+        .count();
+    return OptionalDouble.of(operational * 100.0 / logs.size());
   }
 }

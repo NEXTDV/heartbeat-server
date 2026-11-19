@@ -4,8 +4,11 @@ import com.nextdv.api.common.CommonResponse;
 import com.nextdv.domain.healthcheck.HealthCheckLogService;
 import com.nextdv.domain.platform.PlatformService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.OptionalDouble;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/platforms")
 @RequiredArgsConstructor
 public class PlatformStatusController {
+
+  private static final int UPTIME_WINDOW_HOURS = 24;
 
   private final HealthCheckLogService healthCheckLogService;
   private final PlatformService platformService;
@@ -47,6 +52,32 @@ public class PlatformStatusController {
         .findLatestByPlatformId(id)
         .map(log -> ResponseEntity.ok(CommonResponse.ok(HealthCheckLogMapper.toResponse(log))))
         .orElse(ResponseEntity.ok(CommonResponse.ok(null)));
+  }
+
+  /**
+   * 메소드이름: getUptime
+   * 특정 플랫폼의 최근 24시간 가동률(%)을 조회한다
+   *
+   * @param id 조회할 플랫폼 UUID
+   * @return 최근 24시간 가동률 응답 (해당 구간에 로그가 없으면 uptimePercent는 null)
+   */
+  @GetMapping("/{id}/uptime")
+  @ApiResponse(responseCode = "400", description = "id가 UUID 형식이 아님")
+  @ApiResponse(responseCode = "404", description = "해당 ID에 해당하는 플랫폼이 존재하지 않음")
+  @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+  public ResponseEntity<CommonResponse<PlatformUptimeResponse>> getUptime(@PathVariable UUID id) {
+    platformService
+        .findById(id)
+        .orElseThrow(() -> new NoSuchElementException("플랫폼을 찾을 수 없습니다."));
+    Instant since = Instant.now().minus(Duration.ofHours(UPTIME_WINDOW_HOURS));
+    OptionalDouble uptime = healthCheckLogService.calculateUptimePercent(
+        id,
+        since
+    );
+    Double uptimePercent = uptime.stream().boxed().findFirst().orElse(null);
+    return ResponseEntity.ok(
+        CommonResponse.ok(new PlatformUptimeResponse(id, UPTIME_WINDOW_HOURS, uptimePercent))
+    );
   }
 
   /**
