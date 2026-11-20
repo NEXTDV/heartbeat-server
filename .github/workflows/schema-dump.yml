@@ -32,13 +32,13 @@ jobs:
           trap 'sudo kubectl delete pod "$POD" -n heartbeat --ignore-not-found --wait=false >/dev/null 2>&1 || true' EXIT
           # DB 접속 정보는 클러스터 안 시크릿에서 바로 주입해 서버 밖으로 나가지 않게 한다
           OVERRIDES=$(cat <<JSON
-          {"spec":{"hostNetwork":true,"dnsPolicy":"ClusterFirstWithHostNet","containers":[{"name":"$POD","image":"postgres:17-alpine",
+          {"spec":{"hostNetwork":true,"dnsPolicy":"ClusterFirstWithHostNet","containers":[{"name":"$POD","image":"postgres:17.12-alpine",
           "envFrom":[{"secretRef":{"name":"heartbeat-secret"}}],
           "command":["sh","-c","U=\"\${DB_URL#jdbc:postgresql://}\"; U=\"\${U%%\\\\?*}\"; HP=\"\${U%%/*}\"; DB=\"\${U#*/}\"; H=\"\${HP%%:*}\"; P=\"\${HP#*:}\"; [ \"\$P\" = \"\$HP\" ] && P=5432; PGPASSWORD=\"\$DB_PASSWORD\" exec pg_dump --schema-only --no-owner --no-privileges -h \"\$H\" -p \"\$P\" -U \"\$DB_USERNAME\" \"\$DB\""]}]}}
           JSON
           )
           sudo kubectl run "$POD" -n heartbeat --restart=Never \
-            --image=postgres:17-alpine --overrides="$OVERRIDES" >&2
+            --image=postgres:17.12-alpine --overrides="$OVERRIDES" >&2
 
           # pod에 붙어서 받으면 먼저 끝났을 때 출력을 놓치므로, 끝날 때까지 기다렸다가 기록을 읽는다
           PHASE=""
