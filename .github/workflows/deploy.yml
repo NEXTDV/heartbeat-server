@@ -25,7 +25,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/nextdv/heartbeat-server:latest
+          tags: |
+            ghcr.io/nextdv/heartbeat-server:latest
+            ghcr.io/nextdv/heartbeat-server:${{ github.sha }}
 
   deploy:
     needs: build-push
@@ -51,9 +53,15 @@ jobs:
           script: |
             sudo kubectl apply -f ~/heartbeat-k3s/k3s/namespace.yaml
             sudo kubectl apply -f ~/heartbeat-k3s/k3s/service.yaml
-            sudo kubectl apply -f ~/heartbeat-k3s/k3s/deployment.yaml
             sudo kubectl apply -f ~/heartbeat-k3s/k3s/ingress.yaml
             sudo kubectl patch secret heartbeat-secret -n heartbeat \
               --patch='{"stringData":{"APP_SWAGGER_SERVER_URL":"${{ secrets.APP_SWAGGER_SERVER_URL }}"}}'
-            sudo kubectl rollout restart deployment/heartbeat -n heartbeat
+            # 이미지를 :latest 대신 커밋 SHA 태그로 지정해 실행 중인 버전을 추적하고 정확히 롤백할 수 있게 한다
+            APPLIED=$(sed 's|ghcr.io/nextdv/heartbeat-server:latest|ghcr.io/nextdv/heartbeat-server:${{ github.sha }}|' \
+              ~/heartbeat-k3s/k3s/deployment.yaml | sudo kubectl apply -f -)
+            echo "$APPLIED"
+            # 같은 커밋을 다시 배포하면 이미지가 그대로라 재시작되지 않으므로, 바뀐 시크릿 반영을 위해 직접 재시작한다
+            case "$APPLIED" in
+              *unchanged*) sudo kubectl rollout restart deployment/heartbeat -n heartbeat ;;
+            esac
             sudo kubectl rollout status deployment/heartbeat -n heartbeat --timeout=120s
