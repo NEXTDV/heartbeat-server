@@ -9,6 +9,7 @@ import com.nextdv.domain.healthcheck.ServiceStatus;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,5 +118,80 @@ class HealthCheckLogServiceTest {
 
     assertThat(result).hasSize(1);
     assertThat(result.get(0).getStatus()).isEqualTo(ServiceStatus.OPERATIONAL);
+  }
+
+  @Test
+  void 구간에_로그가_없으면_가동률이_비어있다() {
+    OptionalDouble result = healthCheckLogService.calculateUptimePercent(
+        UUID.randomUUID(),
+        Instant.now().minusSeconds(86400)
+    );
+
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  void 정상_로그_비율을_백분율로_계산한다() {
+    UUID platformId = UUID.randomUUID();
+    Instant since = Instant.now().minusSeconds(86400);
+    Instant now = Instant.now();
+    saveLog(
+        platformId,
+        ServiceStatusEntity.OPERATIONAL,
+        now
+    );
+    saveLog(
+        platformId,
+        ServiceStatusEntity.OPERATIONAL,
+        now
+    );
+    saveLog(
+        platformId,
+        ServiceStatusEntity.OPERATIONAL,
+        now
+    );
+    saveLog(
+        platformId,
+        ServiceStatusEntity.MAJOR_OUTAGE,
+        now
+    );
+
+    OptionalDouble result = healthCheckLogService.calculateUptimePercent(
+        platformId,
+        since
+    );
+
+    assertThat(result).hasValue(75.0);
+  }
+
+  @Test
+  void since_이전의_로그는_계산에서_제외한다() {
+    UUID platformId = UUID.randomUUID();
+    Instant since = Instant.now().minusSeconds(86400);
+    Instant inWindow = Instant.now();
+    Instant beforeWindow = since.minusSeconds(60);
+    saveLog(
+        platformId,
+        ServiceStatusEntity.OPERATIONAL,
+        inWindow
+    );
+    saveLog(
+        platformId,
+        ServiceStatusEntity.MAJOR_OUTAGE,
+        beforeWindow
+    );
+
+    OptionalDouble result = healthCheckLogService.calculateUptimePercent(
+        platformId,
+        since
+    );
+
+    assertThat(result).hasValue(100.0);
+  }
+
+  private void saveLog(UUID platformId, ServiceStatusEntity status, Instant checkedAt) {
+    jpaRepository.save(
+        new HealthCheckLogEntity(UuidV7.generate(), platformId, status, null, 100, checkedAt)
+    );
   }
 }

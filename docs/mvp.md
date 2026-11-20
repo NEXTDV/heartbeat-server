@@ -124,6 +124,7 @@ CREATE TABLE delivery_logs (
 | #27 | 헬스체크 스케줄러 (주기적 폴링 + DB 기록) | 🔄 PR 머지 대기 |
 | #26 | 채널 API (Slack/Discord webhook 등록/삭제) | 🔄 PR 머지 대기 |
 | #28 | 플랫폼 상태 조회 API | ✅ 완료 |
+| #138 | 플랫폼 가동률(최근 24시간) 조회 API | 🔄 진행 중 |
 
 ### Alert (Slack & Discord)
 - 서비스 장애 감지 시 등록된 채널로 알림 발송
