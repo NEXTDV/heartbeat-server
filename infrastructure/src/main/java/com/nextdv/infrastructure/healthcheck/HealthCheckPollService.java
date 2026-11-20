@@ -41,9 +41,21 @@ public class HealthCheckPollService {
   /**
    * 메소드이름: pollAll
    * 활성화된 모든 플랫폼에 대해 헬스체크를 수행한다
+   * 한 플랫폼에서 예외가 발생해도 나머지 플랫폼은 계속 폴링한다
    */
   public void pollAll() {
-    platformService.findAll().forEach(this::poll);
+    platformService.findAll().forEach(platform -> {
+      try {
+        poll(platform);
+      } catch (Exception e) {
+        log.error(
+            "헬스체크 실패 — 플랫폼: {}, URL: {}",
+            platform.getId(),
+            platform.getHealthCheckUrl(),
+            e
+        );
+      }
+    });
   }
 
   private void poll(Platform platform) {
