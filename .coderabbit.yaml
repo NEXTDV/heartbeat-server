@@ -1,0 +1,6 @@
+language: "ko-KR"
+tone_instructions: "리뷰 코멘트, 요약, 설명, 판단 문장을 포함한 모든 글은 반드시 한국어로 작성한다. 코드, 파일명, 명령어, 에러 메시지는 원문 그대로 둔다."
+reviews:
+  auto_review:
+    enabled: true
+    drafts: false
