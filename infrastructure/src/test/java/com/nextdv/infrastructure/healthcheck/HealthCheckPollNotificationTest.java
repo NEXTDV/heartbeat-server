@@ -6,6 +6,8 @@ import com.nextdv.domain.channel.ChannelRepository;
 import com.nextdv.domain.healthcheck.ServiceStatus;
 import com.nextdv.domain.platform.Platform;
 import com.nextdv.domain.platform.ServiceCategory;
+import com.nextdv.infrastructure.account.AccountEntity;
+import com.nextdv.infrastructure.account.AccountJpaRepository;
 import com.nextdv.infrastructure.channel.ChannelEntity;
 import com.nextdv.infrastructure.channel.ChannelJpaRepository;
 import com.nextdv.infrastructure.channel.ChannelPlatformEntity;
@@ -15,6 +17,8 @@ import com.nextdv.infrastructure.channel.ChannelTypeEntity;
 import com.nextdv.infrastructure.notification.FakeDiscordSender;
 import com.nextdv.infrastructure.notification.FakeEmailSender;
 import com.nextdv.infrastructure.notification.FakeSlackSender;
+import com.nextdv.infrastructure.platform.PlatformEntity;
+import com.nextdv.infrastructure.platform.PlatformJpaRepository;
 import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
@@ -47,12 +51,31 @@ class HealthCheckPollNotificationTest {
   private ChannelPlatformJpaRepository channelPlatformJpaRepository;
 
   @Autowired
+  private AccountJpaRepository accountJpaRepository;
+
+  @Autowired
+  private PlatformJpaRepository platformJpaRepository;
+
+  @Autowired
   private ChannelRepository channelRepository;
 
   private FakeEmailSender fakeEmailSender;
   private FakeSlackSender fakeSlackSender;
   private FakeDiscordSender fakeDiscordSender;
   private HealthCheckPollService service;
+
+  private void saveAccount(UUID userId) {
+    accountJpaRepository.save(new AccountEntity(userId, userId + "@test.com"));
+  }
+
+  private void savePlatform(UUID platformId) {
+    platformJpaRepository.save(
+        new PlatformEntity(
+            platformId, "테스트", ServiceCategory.OTHER, "https://example.com/health", 3000, 1000,
+            null, true
+        )
+    );
+  }
 
   @BeforeEach
   void setUp() {
@@ -68,17 +91,20 @@ class HealthCheckPollNotificationTest {
   void 상태변화_시_이메일_채널에_알림이_발송된다() {
     UUID platformId = UUID.randomUUID();
     UUID channelId = UUID.randomUUID();
+    UUID userId = UUID.randomUUID();
     Instant now = Instant.now();
 
+    saveAccount(userId);
     channelJpaRepository.save(
         new ChannelEntity(
-            channelId, UUID.randomUUID(), ChannelTypeEntity.EMAIL,
+            channelId, userId, ChannelTypeEntity.EMAIL,
             "이메일", Map.of(
                 "address",
                 "user@example.com"
             ), now, now, null
         )
     );
+    savePlatform(platformId);
     channelPlatformJpaRepository.save(
         new ChannelPlatformEntity(UUID.randomUUID(), channelId, platformId, now)
     );
@@ -133,17 +159,20 @@ class HealthCheckPollNotificationTest {
   void 소프트삭제된_구독은_알림이_발송되지_않는다() {
     UUID platformId = UUID.randomUUID();
     UUID channelId = UUID.randomUUID();
+    UUID userId = UUID.randomUUID();
     Instant now = Instant.now();
 
+    saveAccount(userId);
     channelJpaRepository.save(
         new ChannelEntity(
-            channelId, UUID.randomUUID(), ChannelTypeEntity.EMAIL,
+            channelId, userId, ChannelTypeEntity.EMAIL,
             "이메일", Map.of(
                 "address",
                 "user@example.com"
             ), now, now, null
         )
     );
+    savePlatform(platformId);
     channelPlatformJpaRepository.save(
         new ChannelPlatformEntity(UUID.randomUUID(), channelId, platformId, now, now)
     );
@@ -166,17 +195,20 @@ class HealthCheckPollNotificationTest {
   void 이미_발송된_상태에서_같은_상태가_유지되면_추가_알림이_발송되지_않는다() {
     UUID platformId = UUID.randomUUID();
     UUID channelId = UUID.randomUUID();
+    UUID userId = UUID.randomUUID();
     Instant now = Instant.now();
 
+    saveAccount(userId);
     channelJpaRepository.save(
         new ChannelEntity(
-            channelId, UUID.randomUUID(), ChannelTypeEntity.EMAIL,
+            channelId, userId, ChannelTypeEntity.EMAIL,
             "이메일", Map.of(
                 "address",
                 "user@example.com"
             ), now, now, null
         )
     );
+    savePlatform(platformId);
     channelPlatformJpaRepository.save(
         new ChannelPlatformEntity(UUID.randomUUID(), channelId, platformId, now)
     );
@@ -204,17 +236,20 @@ class HealthCheckPollNotificationTest {
   void 상태변화_시_Slack_채널에_알림이_발송된다() {
     UUID platformId = UUID.randomUUID();
     UUID channelId = UUID.randomUUID();
+    UUID userId = UUID.randomUUID();
     Instant now = Instant.now();
 
+    saveAccount(userId);
     channelJpaRepository.save(
         new ChannelEntity(
-            channelId, UUID.randomUUID(), ChannelTypeEntity.SLACK,
+            channelId, userId, ChannelTypeEntity.SLACK,
             "슬랙", Map.of(
                 "url",
                 "https://hooks.slack.com/test"
             ), now, now, null
         )
     );
+    savePlatform(platformId);
     channelPlatformJpaRepository.save(
         new ChannelPlatformEntity(UUID.randomUUID(), channelId, platformId, now)
     );
@@ -237,17 +272,20 @@ class HealthCheckPollNotificationTest {
   void 상태변화_시_Discord_채널에_알림이_발송된다() {
     UUID platformId = UUID.randomUUID();
     UUID channelId = UUID.randomUUID();
+    UUID userId = UUID.randomUUID();
     Instant now = Instant.now();
 
+    saveAccount(userId);
     channelJpaRepository.save(
         new ChannelEntity(
-            channelId, UUID.randomUUID(), ChannelTypeEntity.DISCORD,
+            channelId, userId, ChannelTypeEntity.DISCORD,
             "디스코드", Map.of(
                 "url",
                 "https://discord.com/api/webhooks/test"
             ), now, now, null
         )
     );
+    savePlatform(platformId);
     channelPlatformJpaRepository.save(
         new ChannelPlatformEntity(UUID.randomUUID(), channelId, platformId, now)
     );
