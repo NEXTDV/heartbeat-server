@@ -30,6 +30,12 @@ public class SmtpEmailSender implements EmailSender {
    */
   @Override
   public void send(String address, Platform platform, ServiceStatus newStatus) {
+    log.info(
+        "이메일 알림 발송 — 수신자: {}, 플랫폼: {}, 상태: {}",
+        address,
+        platform.getName(),
+        newStatus.name()
+    );
     SimpleMailMessage message = new SimpleMailMessage();
     message.setTo(address);
     message.setSubject("[Heartbeat] " + platform.getName() + " 상태 변화: " + newStatus.name());
@@ -38,5 +44,9 @@ public class SmtpEmailSender implements EmailSender {
             + "URL: " + platform.getHealthCheckUrl()
     );
     mailSender.send(message);
+    log.info(
+        "이메일 알림 발송 완료 — 수신자: {}",
+        address
+    );
   }
 }

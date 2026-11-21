@@ -30,6 +30,11 @@ public class SlackWebhookSender implements SlackSender {
    */
   @Override
   public void send(String webhookUrl, Platform platform, ServiceStatus newStatus) {
+    log.info(
+        "Slack 알림 발송 — 플랫폼: {}, 상태: {}",
+        platform.getName(),
+        newStatus.name()
+    );
     String text = "[Heartbeat] " + platform.getName() + " 상태 변화: " + newStatus.name();
     restClient
         .post()
@@ -42,5 +47,9 @@ public class SlackWebhookSender implements SlackSender {
         )
         .retrieve()
         .toBodilessEntity();
+    log.info(
+        "Slack 알림 발송 완료 — 플랫폼: {}",
+        platform.getName()
+    );
   }
 }
