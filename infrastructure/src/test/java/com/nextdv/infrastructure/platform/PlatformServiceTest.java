@@ -3,6 +3,7 @@ package com.nextdv.infrastructure.platform;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.nextdv.domain.platform.Platform;
+import com.nextdv.infrastructure.PostgresContainerSupport;
 import com.nextdv.domain.platform.PlatformService;
 import com.nextdv.domain.platform.ServiceCategory;
 import java.util.List;
@@ -13,23 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Import;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Import({PlatformRepositoryImpl.class, PlatformService.class})
-@Testcontainers
-class PlatformServiceTest {
-
-  @Container
-  @ServiceConnection
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-      "postgres:16-alpine"
-  );
+class PlatformServiceTest extends PostgresContainerSupport {
 
   @Autowired
   private PlatformJpaRepository jpaRepository;

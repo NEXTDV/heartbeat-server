@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.nextdv.domain.channel.Channel;
+import com.nextdv.infrastructure.PostgresContainerSupport;
 import com.nextdv.domain.channel.ChannelService;
 import com.nextdv.domain.channel.ChannelType;
 import java.time.Instant;
@@ -16,21 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Import;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Import({ChannelRepositoryImpl.class, ChannelService.class})
-@Testcontainers
-class ChannelServiceTest {
-
-  @Container
-  @ServiceConnection
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
+class ChannelServiceTest extends PostgresContainerSupport {
 
   @Autowired
   private ChannelJpaRepository channelJpaRepository;
