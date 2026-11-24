@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.nextdv.domain.channel.Channel;
 import com.nextdv.domain.channel.ChannelService;
 import com.nextdv.domain.channel.ChannelType;
+import com.nextdv.infrastructure.account.AccountEntity;
+import com.nextdv.infrastructure.account.AccountJpaRepository;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -36,11 +38,19 @@ class ChannelServiceTest {
   private ChannelJpaRepository channelJpaRepository;
 
   @Autowired
+  private AccountJpaRepository accountJpaRepository;
+
+  @Autowired
   private ChannelService channelService;
+
+  private void saveAccount(UUID userId) {
+    accountJpaRepository.save(new AccountEntity(userId, userId + "@test.com"));
+  }
 
   @Test
   void 채널을_생성하면_저장하고_반환한다() {
     UUID userId = UUID.randomUUID();
+    saveAccount(userId);
     Map<String, Object> config = Map.of(
         "url",
         "https://hooks.slack.com/example"
@@ -62,6 +72,7 @@ class ChannelServiceTest {
   @Test
   void userId로_채널_목록을_조회한다() {
     UUID userId = UUID.randomUUID();
+    saveAccount(userId);
     Instant now = Instant.now();
     channelJpaRepository.save(
         new ChannelEntity(
@@ -84,6 +95,7 @@ class ChannelServiceTest {
   @Test
   void 채널을_삭제하면_deletedAt이_설정된다() {
     UUID userId = UUID.randomUUID();
+    saveAccount(userId);
     Channel created = channelService.create(
         userId,
         ChannelType.EMAIL,
@@ -103,6 +115,7 @@ class ChannelServiceTest {
   @Test
   void 삭제된_채널은_목록_조회에서_제외된다() {
     UUID userId = UUID.randomUUID();
+    saveAccount(userId);
     Channel active = channelService.create(
         userId,
         ChannelType.SLACK,
